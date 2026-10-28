@@ -177,6 +177,21 @@ textarea{resize:vertical;min-height:84px;line-height:1.5}
 .hbar .t{height:14px;background:var(--sunk);border-radius:4px;overflow:hidden}
 .hbar .t b{display:block;height:100%;border-radius:4px}
 .hbar .v{font-family:var(--f-mono);font-size:12px;text-align:right}
+.prac{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,150px),1fr));gap:10px}
+.pc{border:1px solid var(--line);border-radius:8px;padding:12px;display:grid;gap:8px;min-width:0}
+.pc.met{border-color:var(--good);background:color-mix(in srgb,var(--good) 8%,transparent)}
+.pc .top2{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.pc .nm{font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pc .goal{font-family:var(--f-mono);font-size:12px;color:var(--muted);white-space:nowrap}
+.pc.met .goal{color:var(--good)}
+.pc .ctl{display:grid;grid-template-columns:36px 1fr 36px;gap:6px;align-items:center}
+.pc .ctl button{height:40px;border-radius:8px;border:1px solid var(--line);background:var(--surface);font-size:20px;line-height:1}
+.pc .ctl button.plus{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.pc .ctl input{text-align:center;font-family:var(--f-mono);font-size:20px;padding:6px 4px;height:40px}
+.pc .bar{height:4px;border-radius:99px;background:var(--sunk);overflow:hidden}
+.pc .bar b{display:block;height:100%;background:var(--accent)}
+.pc.met .bar b{background:var(--good)}
+.vbars text{font-family:var(--f-mono);font-size:10px;fill:var(--muted)}
 .toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:8px;font-size:14px;z-index:20;max-width:calc(100% - 32px)}
 .loading{padding:60px 0;text-align:center;color:var(--muted)}
 @media (max-width:520px){
@@ -273,6 +288,9 @@ const SCALES = {
   mood:{label:"Mood",words:["Rough","Low","Okay","Good","Great"]},
   energy:{label:"Energy",words:["Drained","Tired","Steady","Sharp","Wired"]},
   prod:{label:"Productivity",words:["None","Little","Some","Solid","Huge"]}};
+const DEFAULT_SUBJECTS = [
+  {id:"q-excel",name:"Excel",goal:5},{id:"q-sql",name:"SQL",goal:5},{id:"q-python",name:"Python",goal:5},
+  {id:"q-powerbi",name:"Power BI",goal:3},{id:"q-biz",name:"Business case",goal:2}];
 const DEFAULT_HABITS = [
   {id:"h-workout",name:"Workout"},{id:"h-read",name:"Read 20 min"},{id:"h-sql",name:"Practice SQL / Python"},
   {id:"h-apply",name:"Apply to 2 jobs"},{id:"h-water",name:"Drink 3L water"},{id:"h-screen",name:"No phone after 11 pm"}];
@@ -334,6 +352,9 @@ let tab = "today";
 const getDay = k => Store.get("d-"+k) || {habits:{},time:[]};
 const setDay = (k,fn,delay) => { const d=clone(getDay(k)); d.habits=d.habits||{}; d.time=d.time||[]; fn(d); Store.save("d-"+k,d,delay); };
 const habits = () => (Store.get("settings")||{}).habits || [];
+const subjects = () => (Store.get("settings")||{}).subjects || DEFAULT_SUBJECTS;
+const pracTotal = d => Object.values((d&&d.practice)||{}).reduce((s,v)=>s+(+v||0),0);
+function saveSubjects(list){ const s=clone(Store.get("settings")||{}); s.subjects=list; Store.save("settings",s); }
 const jobs = () => (Store.get("jobs")||{}).items || [];
 const done = (k,h) => !!((Store.get("d-"+k)||{}).habits||{})[h];
 function streak(h){
@@ -354,6 +375,30 @@ function renderChrome(){
 }
 
 /* ---------- views ---------- */
+function viewPractice(d){
+  const sj=subjects(), p=d.practice||{}, tot=pracTotal(d), goalTot=sj.reduce((s,x)=>s+(+x.goal||0),0);
+  let wk=0; for(let i=0;i<7;i++) wk+=pracTotal(Store.get("d-"+addDays(sel,-i)));
+  return `<section class="panel">
+    <h2>Practice log</h2>
+    <p class="sub">Questions solved: <span class="num">${tot}</span>${goalTot?` of <span class="num">${goalTot}</span> goal`:""} · <span class="num">${wk}</span> in the last 7 days</p>
+    <div class="prac">${sj.map(x=>{ const v=+p[x.id]||0, g=+x.goal||0, met=g&&v>=g;
+      return `<div class="pc ${met?"met":""}">
+        <div class="top2"><span class="nm" title="${esc(x.name)}">${esc(x.name)}</span><span class="goal">${g?(met?"✓ ":"")+v+"/"+g:v}</span></div>
+        <div class="ctl"><button data-pminus="${x.id}" aria-label="One less ${esc(x.name)} question">−</button>
+          <input type="number" inputmode="numeric" min="0" max="999" id="pq-${x.id}" data-pset="${x.id}" value="${v}" aria-label="${esc(x.name)} questions">
+          <button class="plus" data-pplus="${x.id}" aria-label="One more ${esc(x.name)} question">+</button></div>
+        ${g?`<div class="bar"><b style="width:${Math.min(100,v/g*100)}%"></b></div>`:""}
+      </div>`;}).join("")}</div>
+    <details style="margin-top:12px" id="subjdetails"><summary class="hint" style="cursor:pointer">Edit subjects and daily goals</summary>
+      <div style="display:grid;gap:8px;margin-top:10px">${sj.map(x=>`<div class="row" style="align-items:center">
+        <span style="flex:1;min-width:0">${esc(x.name)}</span>
+        <label class="hint" for="sg-${x.id}">Goal</label><input type="number" min="0" max="999" id="sg-${x.id}" data-sgoal="${x.id}" value="${+x.goal||0}" style="width:80px">
+        <button class="del" data-sdel="${x.id}" aria-label="Remove ${esc(x.name)}">×</button></div>`).join("")}</div>
+      <form class="row" id="addsubj" style="margin-top:10px"><div class="field grow"><input type="text" id="newsubj" maxlength="30" placeholder="e.g. Statistics, DAX, Pandas" aria-label="New subject"></div>
+        <div class="field" style="width:80px"><input type="number" id="newsubjgoal" min="0" max="999" value="3" aria-label="Daily goal"></div><button class="btn small">Add subject</button></form>
+    </details>
+  </section>`;
+}
 function viewToday(){
   const d=getDay(sel), hs=habits();
   const n=hs.filter(h=>d.habits&&d.habits[h.id]).length;
@@ -384,7 +429,8 @@ function viewToday(){
       <div class="field"><label class="label" for="note">Journal</label><textarea id="note" placeholder="What went well? What got in the way?">${esc(d.note||"")}</textarea></div>
       <div class="hint" id="notestate" style="margin-top:6px">Saves as you type.</div>
     </section>
-  </div>`;
+  </div>
+  ${viewPractice(d)}`;
 }
 
 function viewTime(){
@@ -490,6 +536,14 @@ function viewInsights(){
   const t7={}; days.slice(-7).forEach(x=>{ ((x.d&&x.d.time)||[]).forEach(e=>t7[e.cat]=(t7[e.cat]||0)+dur(e)); });
   const tc=Object.keys(t7).sort((a,b)=>t7[b]-t7[a]);
   if(tc.length) F.push(`This week most of your tracked time went to <b>${esc(catOf(tc[0]).name)}</b> (<span class="num">${fmtH(t7[tc[0]])}</span>).`);
+  const sj=subjects(); const ps30={}; sj.forEach(x=>ps30[x.id]=0);
+  days.forEach(x=>{ const p=(x.d&&x.d.practice)||{}; Object.keys(p).forEach(k=>{ if(k in ps30) ps30[k]+=(+p[k]||0); }); });
+  const q7=days.slice(-7).reduce((s,x)=>s+pracTotal(x.d),0);
+  const pdays=days.filter(x=>pracTotal(x.d)>0).length;
+  const psort=sj.slice().sort((a,b)=>ps30[b.id]-ps30[a.id]);
+  if(psort.length && ps30[psort[0].id]>0){
+    F.push(`You solved <b class="num">${q7}</b> practice questions this week and practised on <b>${pdays}</b> of the last 30 days. Strongest: <b>${esc(psort[0].name)}</b> (${ps30[psort[0].id]}). Least practised: <b>${esc(psort[psort.length-1].name)}</b> (${ps30[psort[psort.length-1].id]}).`);
+  }
   const stale=jobs().filter(j=>j.status==="Applied"&&(parseKey(t)-parseKey(j.date))/864e5>=7).length;
   if(stale) F.push(`<b>${stale}</b> application${stale>1?"s have":" has"} had no reply for a week or more. Time for a follow-up.`);
 
@@ -518,10 +572,25 @@ function viewInsights(){
     <div class="kpi"><b>${comp==null?"–":Math.round(comp)+"%"}</b><span>Habit completion, 30 days</span></div>
     <div class="kpi"><b>${fx(avg(vals("mood")))}</b><span>Avg mood / 5</span></div>
     <div class="kpi"><b>${avg(vals("sleep"))==null?"–":fx(avg(vals("sleep")))+"h"}</b><span>Avg sleep</span></div>
+    <div class="kpi"><b>${q7}</b><span>Questions solved, last 7 days</span></div>
     <div class="kpi"><b>${apps7}</b><span>Applications, last 7 days</span></div>
   </div>
   <section class="panel"><h2>What your data says</h2><p class="sub">Based on the last 30 days. Gets sharper the more you log.</p>
     ${F.length? `<ul class="findings">${F.map(f=>`<li>${f}</li>`).join("")}</ul>` : `<div class="empty">Log at least 5 days of check-ins to see patterns here.</div>`}</section>
+  ${(()=>{ const d14=days.slice(-14), tots=d14.map(x=>pracTotal(x.d)), mx=Math.max(4,...tots);
+    const W=640,H=170,L=28,R=8,T=14,B=22, bw=(W-L-R)/14, ih=H-T-B, step=Math.max(1,Math.ceil(mx/4));
+    const ticks=[]; for(let v=0; v<=mx; v+=step) ticks.push(v);
+    const top=Math.max(mx, ticks[ticks.length-1]); const Y=v=>T+ih-v/top*ih;
+    const bars=`<svg class="chart vbars" viewBox="0 0 ${W} ${H}" role="img" aria-label="Questions solved per day, last 14 days">
+      ${ticks.map(v=>`<line class="grid" x1="${L}" x2="${W-R}" y1="${Y(v)}" y2="${Y(v)}"/><text x="${L-6}" y="${Y(v)+3}" text-anchor="end">${v}</text>`).join("")}
+      ${d14.map((x,i)=>{ const v=tots[i]; const h=Y(0)-Y(v); return `<rect x="${L+i*bw+bw*0.18}" y="${Y(v)}" width="${bw*0.64}" height="${Math.max(0,h)}" rx="3" fill="${x.k===t?"var(--mark)":"var(--accent)"}"><title>${x.k}: ${v}</title></rect>${v?`<text x="${L+i*bw+bw/2}" y="${Y(v)-4}" text-anchor="middle">${v}</text>`:""}<text x="${L+i*bw+bw/2}" y="${H-6}" text-anchor="middle">${i%2===1||x.k===t?parseKey(x.k).getDate():""}</text>`; }).join("")}
+    </svg>`;
+    const mxs=Math.max(1,...sj.map(x=>ps30[x.id]));
+    return `<div class="grid2">
+      <section class="panel"><h2>Questions per day</h2><p class="sub">All subjects, last 14 days. Today in yellow.</p>${q7||tots.some(v=>v)?bars:`<div class="empty">Log practice questions on the Today tab.</div>`}</section>
+      <section class="panel"><h2>Practice by subject</h2><p class="sub">Total questions, last 30 days.</p>
+        <div class="hbars">${sj.map((x,i)=>`<div class="hbar"><span>${esc(x.name)}</span><span class="t"><b style="width:${ps30[x.id]/mxs*100}%;background:var(--c${(i%8)+1})"></b></span><span class="v">${ps30[x.id]}</span></div>`).join("")}</div></section>
+    </div>`; })()}
   <section class="panel"><h2>Habit calendar</h2><p class="sub">Last 4 weeks. Today is outlined.</p><div class="tablewrap">${hs.length?heat:`<div class="empty">Add habits on the Today tab.</div>`}</div></section>
   <div class="grid2">
     <section class="panel"><h2>Mood & productivity</h2>
@@ -568,9 +637,9 @@ function parseCSV(text){
 function daysCSV(){
   const hs=habits(), all=Store.all();
   const keys=Object.keys(all).filter(k=>k.startsWith("d-")).map(k=>k.slice(2)).sort();
-  const head=["date","weekday","mood","energy","productivity","sleep_hours","habits_done","habits_total",...hs.map(h=>"habit_"+h.name),...CATS.map(c=>"min_"+c.id),"journal"];
+  const head=["date","weekday","mood","energy","productivity","sleep_hours","habits_done","habits_total",...hs.map(h=>"habit_"+h.name),...CATS.map(c=>"min_"+c.id),...subjects().map(x=>"q_"+x.name),"journal"];
   const rows=keys.map(k=>{ const d=all["d-"+k]; const by={}; (d.time||[]).forEach(e=>by[e.cat]=(by[e.cat]||0)+dur(e));
-    return [k,DOW[parseKey(k).getDay()],d.mood,d.energy,d.prod,d.sleep,hs.filter(h=>d.habits&&d.habits[h.id]).length,hs.length,...hs.map(h=>d.habits&&d.habits[h.id]?1:0),...CATS.map(c=>by[c.id]||0),d.note]; });
+    return [k,DOW[parseKey(k).getDay()],d.mood,d.energy,d.prod,d.sleep,hs.filter(h=>d.habits&&d.habits[h.id]).length,hs.length,...hs.map(h=>d.habits&&d.habits[h.id]?1:0),...CATS.map(c=>by[c.id]||0),...subjects().map(x=>(d.practice&&+d.practice[x.id])||0),d.note]; });
   return [head,...rows].map(r=>r.map(csvCell).join(",")).join("\n");
 }
 function jobsCSV(){
@@ -602,6 +671,9 @@ function importCSV(text){
     const s=clone(Store.get("settings")||{habits:[]}); s.habits=s.habits||[];
     const hcols=head.map((h,i)=>({h,i})).filter(x=>x.h.startsWith("habit_")).map(x=>{
       const name=x.h.slice(6); let hb=s.habits.find(h=>h.name===name); if(!hb){ hb={id:"h-"+uid(),name}; s.habits.push(hb); } return {i:x.i,id:hb.id}; });
+    s.subjects=s.subjects||clone(DEFAULT_SUBJECTS);
+    const qcols=head.map((h,i)=>({h,i})).filter(x=>x.h.startsWith("q_")).map(x=>{
+      const name=x.h.slice(2); let sb=s.subjects.find(z=>z.name===name); if(!sb){ sb={id:"q-"+uid(),name,goal:0}; s.subjects.push(sb); } return {i:x.i,id:sb.id}; });
     Store.save("settings",s);
     const num=v=>{ const n=parseFloat(v); return isNaN(n)?undefined:n; };
     let n=0;
@@ -609,6 +681,7 @@ function importCSV(text){
       setDay(k,d=>{
         [["mood","mood"],["energy","energy"],["prod","productivity"],["sleep","sleep_hours"]].forEach(([f,c])=>{ if(ix(c)>=0 && d[f]==null){ const v=num(r[ix(c)]); if(v!=null) d[f]=v; } });
         hcols.forEach(h=>{ if(r[h.i]==="1") d.habits[h.id]=true; });
+        qcols.forEach(q=>{ const v=parseInt(r[q.i],10); if(v>0){ d.practice=d.practice||{}; if(!d.practice[q.id]) d.practice[q.id]=v; } });
         if(ix("journal")>=0 && !d.note && r[ix("journal")]) d.note=r[ix("journal")];
         if(!d.time.length) CATS.forEach(c=>{ const m=num(r[ix("min_"+c.id)]); if(m>0) d.time.push({id:uid(),cat:c.id,start:"00:00",end:pad(Math.floor(m/60)%24)+":"+pad(m%60),label:"Imported total"}); });
       },600);
@@ -633,6 +706,14 @@ function bind(){
   const nt=$("#note"); if(nt) nt.oninput=()=>{ setDay(sel,d=>{ d.note=nt.value; },800); const s=$("#notestate"); if(s) s.textContent="Saved on this device. Syncing…"; };
   const ah=$("#addhabit"); if(ah) ah.onsubmit=e=>{ e.preventDefault(); const v=$("#newhabit").value.trim(); if(!v) return; const s=clone(Store.get("settings")||{}); s.habits=(s.habits||[]).concat({id:"h-"+uid(),name:v}); Store.save("settings",s); render(); const det=document.querySelector("details"); if(det) det.open=true; };
   document.querySelectorAll("[data-delhabit]").forEach(b=>b.onclick=()=>{ const s=clone(Store.get("settings")||{}); s.habits=(s.habits||[]).filter(h=>h.id!==b.dataset.delhabit); Store.save("settings",s); render(); const det=document.querySelector("details"); if(det) det.open=true; toast("Habit removed. Past ticks are kept."); });
+  const setQ=(id,v)=>{ setDay(sel,d=>{ d.practice=d.practice||{}; v=Math.max(0,Math.min(999,v|0)); if(v) d.practice[id]=v; else delete d.practice[id]; }); };
+  const keepOpen=()=>{ const det=$("#subjdetails"); if(det) det.open=true; };
+  document.querySelectorAll("[data-pplus]").forEach(b=>b.onclick=()=>{ const id=b.dataset.pplus; setQ(id,(+((getDay(sel).practice||{})[id])||0)+1); render(); });
+  document.querySelectorAll("[data-pminus]").forEach(b=>b.onclick=()=>{ const id=b.dataset.pminus; setQ(id,(+((getDay(sel).practice||{})[id])||0)-1); render(); });
+  document.querySelectorAll("[data-pset]").forEach(inp=>inp.onchange=()=>{ setQ(inp.dataset.pset,parseInt(inp.value,10)||0); render(); });
+  document.querySelectorAll("[data-sgoal]").forEach(inp=>inp.onchange=()=>{ const list=clone(subjects()); const x=list.find(z=>z.id===inp.dataset.sgoal); if(x) x.goal=Math.max(0,parseInt(inp.value,10)||0); saveSubjects(list); render(); keepOpen(); });
+  document.querySelectorAll("[data-sdel]").forEach(b=>b.onclick=()=>{ saveSubjects(clone(subjects()).filter(z=>z.id!==b.dataset.sdel)); render(); keepOpen(); toast("Subject removed. Past counts are kept."); });
+  const asj=$("#addsubj"); if(asj) asj.onsubmit=e=>{ e.preventDefault(); const nm=$("#newsubj").value.trim(); if(!nm) return; const list=clone(subjects()); list.push({id:"q-"+uid(),name:nm,goal:Math.max(0,parseInt($("#newsubjgoal").value,10)||0)}); saveSubjects(list); render(); keepOpen(); };
   const at=$("#addtime"); if(at) at.onsubmit=e=>{ e.preventDefault(); const st=$("#tstart").value, en=$("#tend").value; if(!st||!en){ toast("Add both a start and end time."); return; }
     setDay(sel,d=>{ d.time.push({id:uid(),cat:$("#tcat").value,start:st,end:en,label:$("#tlabel").value.trim()}); }); render(); toast("Block added"); };
   document.querySelectorAll("[data-deltime]").forEach(b=>b.onclick=()=>{ setDay(sel,d=>{ d.time=d.time.filter(e=>e.id!==b.dataset.deltime); }); render(); });
