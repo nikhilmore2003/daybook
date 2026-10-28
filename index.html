@@ -177,6 +177,14 @@ textarea{resize:vertical;min-height:84px;line-height:1.5}
 .hbar .t{height:14px;background:var(--sunk);border-radius:4px;overflow:hidden}
 .hbar .t b{display:block;height:100%;border-radius:4px}
 .hbar .v{font-family:var(--f-mono);font-size:12px;text-align:right}
+.tasks{list-style:none;margin:0;padding:0;display:grid}
+.task{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;padding:8px 0;border-top:1px solid var(--line)}
+.task:first-child{border-top:0}
+.task .tick{width:24px;height:24px;border-radius:50%;border:2px solid var(--line);background:transparent;display:grid;place-items:center;font-size:13px;color:var(--accent-ink);padding:0}
+.task.done .tick{background:var(--good);border-color:var(--good)}
+.task .tx{min-width:0;overflow-wrap:anywhere;cursor:pointer}
+.task.done .tx{text-decoration:line-through;text-decoration-thickness:1.5px;color:var(--muted)}
+.carry{margin-top:10px}
 .prac{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,150px),1fr));gap:10px}
 .pc{border:1px solid var(--line);border-radius:8px;padding:12px;display:grid;gap:8px;min-width:0}
 .pc.met{border-color:var(--good);background:color-mix(in srgb,var(--good) 8%,transparent)}
@@ -375,6 +383,23 @@ function renderChrome(){
 }
 
 /* ---------- views ---------- */
+function viewTasks(d){
+  const list=d.tasks||[], nd=list.filter(x=>x.done).length;
+  const pct=list.length? Math.round(nd/list.length*100):0;
+  const prev=(getDay(addDays(sel,-1)).tasks||[]).filter(x=>!x.done && !list.some(y=>y.text===x.text));
+  return `<section class="panel">
+    <h2>To-do list</h2>
+    <p class="sub">${list.length? `<span class="num">${nd}/${list.length}</span> done · ${pct}%` : "Plan the day. Tick tasks off as you finish them."}</p>
+    ${list.length? `<div class="progress"><b style="width:${pct}%;background:var(--good)"></b></div>`:""}
+    <form class="row" id="addtask" style="margin-bottom:6px"><div class="field grow"><input type="text" id="newtask" maxlength="140" placeholder="Add a task, e.g. Solve 5 SQL joins questions" aria-label="New task" autocomplete="off"></div><button class="btn">Add</button></form>
+    ${list.length? `<ul class="tasks">${list.map(x=>`<li class="task ${x.done?"done":""}">
+      <button class="tick" data-tick="${x.id}" aria-pressed="${!!x.done}" aria-label="${x.done?"Mark not done":"Mark done"}: ${esc(x.text)}">${x.done?"✓":""}</button>
+      <span class="tx" data-tick="${x.id}">${esc(x.text)}</span>
+      <button class="del" data-deltask="${x.id}" aria-label="Delete task">×</button></li>`).join("")}</ul>`
+      : `<div class="empty">No tasks for this day yet.</div>`}
+    ${prev.length? `<button class="btn ghost small carry" id="carry">Move ${prev.length} unfinished task${prev.length>1?"s":""} from the day before</button>`:""}
+  </section>`;
+}
 function viewPractice(d){
   const sj=subjects(), p=d.practice||{}, tot=pracTotal(d), goalTot=sj.reduce((s,x)=>s+(+x.goal||0),0);
   let wk=0; for(let i=0;i<7;i++) wk+=pracTotal(Store.get("d-"+addDays(sel,-i)));
@@ -406,6 +431,7 @@ function viewToday(){
   const scale = key => `<div class="scale"><div class="label">${SCALES[key].label}</div><div class="opts">${
     SCALES[key].words.map((w,i)=>`<button data-scale="${key}" data-v="${i+1}" class="${d[key]===i+1?"on":""}" aria-pressed="${d[key]===i+1}"><b>${i+1}</b>${w}</button>`).join("")}</div></div>`;
   return `
+  ${viewTasks(d)}
   <div class="grid2">
     <section class="panel">
       <h2>Habits</h2>
@@ -544,6 +570,8 @@ function viewInsights(){
   if(psort.length && ps30[psort[0].id]>0){
     F.push(`You solved <b class="num">${q7}</b> practice questions this week and practised on <b>${pdays}</b> of the last 30 days. Strongest: <b>${esc(psort[0].name)}</b> (${ps30[psort[0].id]}). Least practised: <b>${esc(psort[psort.length-1].name)}</b> (${ps30[psort[psort.length-1].id]}).`);
   }
+  const tk=days.slice(-7).reduce((a,x)=>{ const l=(x.d&&x.d.tasks)||[]; a.t+=l.length; a.d+=l.filter(y=>y.done).length; return a; },{t:0,d:0});
+  if(tk.t) F.push(`You finished <b class="num">${tk.d}</b> of <b class="num">${tk.t}</b> to-do tasks this week (${Math.round(tk.d/tk.t*100)}%).`);
   const stale=jobs().filter(j=>j.status==="Applied"&&(parseKey(t)-parseKey(j.date))/864e5>=7).length;
   if(stale) F.push(`<b>${stale}</b> application${stale>1?"s have":" has"} had no reply for a week or more. Time for a follow-up.`);
 
@@ -572,6 +600,7 @@ function viewInsights(){
     <div class="kpi"><b>${comp==null?"–":Math.round(comp)+"%"}</b><span>Habit completion, 30 days</span></div>
     <div class="kpi"><b>${fx(avg(vals("mood")))}</b><span>Avg mood / 5</span></div>
     <div class="kpi"><b>${avg(vals("sleep"))==null?"–":fx(avg(vals("sleep")))+"h"}</b><span>Avg sleep</span></div>
+    <div class="kpi"><b>${tk.t?tk.d+"/"+tk.t:"–"}</b><span>Tasks done, last 7 days</span></div>
     <div class="kpi"><b>${q7}</b><span>Questions solved, last 7 days</span></div>
     <div class="kpi"><b>${apps7}</b><span>Applications, last 7 days</span></div>
   </div>
@@ -637,9 +666,9 @@ function parseCSV(text){
 function daysCSV(){
   const hs=habits(), all=Store.all();
   const keys=Object.keys(all).filter(k=>k.startsWith("d-")).map(k=>k.slice(2)).sort();
-  const head=["date","weekday","mood","energy","productivity","sleep_hours","habits_done","habits_total",...hs.map(h=>"habit_"+h.name),...CATS.map(c=>"min_"+c.id),...subjects().map(x=>"q_"+x.name),"journal"];
+  const head=["date","weekday","mood","energy","productivity","sleep_hours","habits_done","habits_total",...hs.map(h=>"habit_"+h.name),...CATS.map(c=>"min_"+c.id),...subjects().map(x=>"q_"+x.name),"tasks_done","tasks_total","tasks","journal"];
   const rows=keys.map(k=>{ const d=all["d-"+k]; const by={}; (d.time||[]).forEach(e=>by[e.cat]=(by[e.cat]||0)+dur(e));
-    return [k,DOW[parseKey(k).getDay()],d.mood,d.energy,d.prod,d.sleep,hs.filter(h=>d.habits&&d.habits[h.id]).length,hs.length,...hs.map(h=>d.habits&&d.habits[h.id]?1:0),...CATS.map(c=>by[c.id]||0),...subjects().map(x=>(d.practice&&+d.practice[x.id])||0),d.note]; });
+    return [k,DOW[parseKey(k).getDay()],d.mood,d.energy,d.prod,d.sleep,hs.filter(h=>d.habits&&d.habits[h.id]).length,hs.length,...hs.map(h=>d.habits&&d.habits[h.id]?1:0),...CATS.map(c=>by[c.id]||0),...subjects().map(x=>(d.practice&&+d.practice[x.id])||0),(d.tasks||[]).filter(t=>t.done).length,(d.tasks||[]).length,(d.tasks||[]).map(t=>(t.done?"[x] ":"[ ] ")+t.text).join(" | "),d.note]; });
   return [head,...rows].map(r=>r.map(csvCell).join(",")).join("\n");
 }
 function jobsCSV(){
@@ -682,6 +711,7 @@ function importCSV(text){
         [["mood","mood"],["energy","energy"],["prod","productivity"],["sleep","sleep_hours"]].forEach(([f,c])=>{ if(ix(c)>=0 && d[f]==null){ const v=num(r[ix(c)]); if(v!=null) d[f]=v; } });
         hcols.forEach(h=>{ if(r[h.i]==="1") d.habits[h.id]=true; });
         qcols.forEach(q=>{ const v=parseInt(r[q.i],10); if(v>0){ d.practice=d.practice||{}; if(!d.practice[q.id]) d.practice[q.id]=v; } });
+        if(ix("tasks")>=0 && !(d.tasks&&d.tasks.length) && r[ix("tasks")]){ d.tasks=r[ix("tasks")].split(" | ").filter(Boolean).map(t=>({id:uid(),done:t.startsWith("[x] "),text:t.replace(/^\[[x ]\] /,"")})); }
         if(ix("journal")>=0 && !d.note && r[ix("journal")]) d.note=r[ix("journal")];
         if(!d.time.length) CATS.forEach(c=>{ const m=num(r[ix("min_"+c.id)]); if(m>0) d.time.push({id:uid(),cat:c.id,start:"00:00",end:pad(Math.floor(m/60)%24)+":"+pad(m%60),label:"Imported total"}); });
       },600);
@@ -706,6 +736,12 @@ function bind(){
   const nt=$("#note"); if(nt) nt.oninput=()=>{ setDay(sel,d=>{ d.note=nt.value; },800); const s=$("#notestate"); if(s) s.textContent="Saved on this device. Syncing…"; };
   const ah=$("#addhabit"); if(ah) ah.onsubmit=e=>{ e.preventDefault(); const v=$("#newhabit").value.trim(); if(!v) return; const s=clone(Store.get("settings")||{}); s.habits=(s.habits||[]).concat({id:"h-"+uid(),name:v}); Store.save("settings",s); render(); const det=document.querySelector("details"); if(det) det.open=true; };
   document.querySelectorAll("[data-delhabit]").forEach(b=>b.onclick=()=>{ const s=clone(Store.get("settings")||{}); s.habits=(s.habits||[]).filter(h=>h.id!==b.dataset.delhabit); Store.save("settings",s); render(); const det=document.querySelector("details"); if(det) det.open=true; toast("Habit removed. Past ticks are kept."); });
+  const atk=$("#addtask"); if(atk) atk.onsubmit=e=>{ e.preventDefault(); const v=$("#newtask").value.trim(); if(!v) return;
+    setDay(sel,d=>{ d.tasks=d.tasks||[]; d.tasks.push({id:uid(),text:v,done:false}); }); render(); const n=$("#newtask"); if(n) n.focus(); };
+  document.querySelectorAll("[data-tick]").forEach(b=>b.onclick=()=>{ setDay(sel,d=>{ const t=(d.tasks||[]).find(x=>x.id===b.dataset.tick); if(t){ t.done=!t.done; if(t.done) t.doneAt=new Date().toISOString(); else delete t.doneAt; } }); render(); });
+  document.querySelectorAll("[data-deltask]").forEach(b=>b.onclick=()=>{ setDay(sel,d=>{ d.tasks=(d.tasks||[]).filter(x=>x.id!==b.dataset.deltask); }); render(); });
+  const cy=$("#carry"); if(cy) cy.onclick=()=>{ const cur=getDay(sel).tasks||[]; const prev=(getDay(addDays(sel,-1)).tasks||[]).filter(x=>!x.done && !cur.some(y=>y.text===x.text));
+    setDay(sel,d=>{ d.tasks=(d.tasks||[]).concat(prev.map(x=>({id:uid(),text:x.text,done:false}))); }); render(); toast("Moved "+prev.length+" task"+(prev.length>1?"s":"")); };
   const setQ=(id,v)=>{ setDay(sel,d=>{ d.practice=d.practice||{}; v=Math.max(0,Math.min(999,v|0)); if(v) d.practice[id]=v; else delete d.practice[id]; }); };
   const keepOpen=()=>{ const det=$("#subjdetails"); if(det) det.open=true; };
   document.querySelectorAll("[data-pplus]").forEach(b=>b.onclick=()=>{ const id=b.dataset.pplus; setQ(id,(+((getDay(sel).practice||{})[id])||0)+1); render(); });
