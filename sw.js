@@ -1,6 +1,6 @@
 // Service worker: lets Daybook open offline and install like an app.
 // Bump VERSION whenever you change files, so phones pick up the new version.
-const VERSION = "daybook-v3";
+const VERSION = "daybook-v4";
 const SHELL = ["./", "./index.html", "./config.js", "./manifest.webmanifest",
   "./icons/icon-192.png", "./icons/icon-512.png", "./icons/apple-touch-icon.png"];
 

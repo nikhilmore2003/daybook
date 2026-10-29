@@ -177,6 +177,13 @@ textarea{resize:vertical;min-height:84px;line-height:1.5}
 .hbar .t{height:14px;background:var(--sunk);border-radius:4px;overflow:hidden}
 .hbar .t b{display:block;height:100%;border-radius:4px}
 .hbar .v{font-family:var(--f-mono);font-size:12px;text-align:right}
+.plat{display:inline-block;font-size:11px;font-weight:600;padding:1px 7px;border-radius:99px;background:var(--sunk);color:var(--muted);margin-top:3px}
+.jobs td.co .plat{display:inline-block;font-size:11px;color:var(--muted)}
+.jlink{color:var(--accent);font-weight:600;font-size:13px;text-decoration:none;white-space:nowrap}
+.jlink:hover{text-decoration:underline}
+.byplat{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+.byplat span{font-size:12px;background:var(--sunk);border-radius:99px;padding:3px 10px;color:var(--muted)}
+.byplat b{color:var(--ink);font-family:var(--f-mono);font-weight:500;margin-left:4px}
 .tasks{list-style:none;margin:0;padding:0;display:grid}
 .task{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;padding:8px 0;border-top:1px solid var(--line)}
 .task:first-child{border-top:0}
@@ -291,6 +298,8 @@ const CATS = [
   {id:"exercise",name:"Exercise",c:"--c5"},{id:"social",name:"Family & friends",c:"--c4"},{id:"leisure",name:"Leisure",c:"--c6"},
   {id:"commute",name:"Commute",c:"--c7"},{id:"other",name:"Other",c:"--c8"}];
 const catOf = id => CATS.find(c=>c.id===id) || CATS[CATS.length-1];
+const PLATFORMS = ["LinkedIn","Naukri","Indeed","Internshala","Instahyre","Wellfound","Foundit","Cutshort","Hirist","Unstop","Glassdoor","Company website","Referral","Email"];
+const safeUrl = u => { u=String(u||"").trim(); if(!u) return ""; if(!/^https?:\/\//i.test(u)) u="https://"+u; try{ const x=new URL(u); return (x.protocol==="https:"||x.protocol==="http:")? x.href : ""; }catch(e){ return ""; } };
 const STATUSES = ["Applied","OA","Interview","Offer","Rejected","Ghosted"];
 const SCALES = {
   mood:{label:"Mood",words:["Rough","Low","Okay","Good","Great"]},
@@ -507,6 +516,8 @@ function viewJobs(){
     <h2>Pipeline</h2>
     <p class="sub"><span class="num">${items.length}</span> applications · <span class="num">${week}</span> this week · response rate <span class="num">${items.length?Math.round(responded/items.length*100):0}%</span></p>
     <div class="funnel">${STATUSES.map(s=>`<div class="fstep"><b>${count(s)}</b><span>${s==="OA"?"Online test":s}</span></div>`).join("")}</div>
+    ${(()=>{ const by={}; items.forEach(j=>{ const p=j.platform||"Not set"; by[p]=(by[p]||0)+1; }); const ks=Object.keys(by).sort((a,b)=>by[b]-by[a]);
+      return items.length? `<div class="byplat">${ks.map(k=>`<span>${esc(k)}<b>${by[k]}</b></span>`).join("")}</div>`:""; })()}
   </section>
   <section class="panel">
     <h2>Add an application</h2>
@@ -516,16 +527,22 @@ function viewJobs(){
         <div class="field grow"><label class="label" for="jrole">Role</label><input type="text" id="jrole" maxlength="60" placeholder="Data Analyst"></div>
       </div>
       <div class="row">
+        <div class="field grow" style="flex-basis:260px"><label class="label" for="jlink">Job link</label><input type="text" inputmode="url" id="jlink" maxlength="600" placeholder="Paste the job post URL" autocomplete="off"></div>
+        <div class="field grow"><label class="label" for="jplat">Platform</label><input type="text" id="jplat" list="platlist" maxlength="40" placeholder="LinkedIn, Naukri…" autocomplete="off">
+          <datalist id="platlist">${PLATFORMS.map(p=>`<option value="${p}"></option>`).join("")}</datalist></div>
+      </div>
+      <div class="row">
         <div class="field" style="width:160px"><label class="label" for="jdate">Applied on</label><input type="date" id="jdate" value="${t}" max="${t}"></div>
         <div class="field" style="width:150px"><label class="label" for="jstatus">Status</label><select id="jstatus">${STATUSES.map(s=>`<option>${s}</option>`).join("")}</select></div>
         <button class="btn">Add</button>
       </div>
     </form>
-    ${items.length? `<div class="tablewrap"><table class="jobs"><thead><tr><th>Company</th><th>Status</th><th>Applied</th><th></th></tr></thead><tbody>
+    ${items.length? `<div class="tablewrap"><table class="jobs"><thead><tr><th>Company</th><th>Status</th><th>Applied</th><th>Link</th><th></th></tr></thead><tbody>
     ${items.map(j=>{ const a=ageDays(j); const nudge=j.status==="Applied"&&a>=7;
-      return `<tr><td class="co"><b>${esc(j.company)}</b><span>${esc(j.role||"")}</span></td>
+      return `<tr><td class="co"><b>${esc(j.company)}</b><span>${esc(j.role||"")}</span>${j.platform?`<span class="plat">${esc(j.platform)}</span>`:""}</td>
       <td><select class="pill s-${j.status}" data-jobstatus="${j.id}" aria-label="Status for ${esc(j.company)}">${STATUSES.map(s=>`<option ${s===j.status?"selected":""}>${s}</option>`).join("")}</select></td>
       <td class="age ${nudge?"nudge":""}">${a===0?"today":a+"d ago"}${nudge?" · follow up":""}</td>
+      <td>${safeUrl(j.link)?`<a class="jlink" href="${esc(safeUrl(j.link))}" target="_blank" rel="noopener noreferrer">Open ↗</a>`:""}</td>
       <td><button class="del" data-deljob="${j.id}" aria-label="Delete ${esc(j.company)}">×</button></td></tr>`;}).join("")}
     </tbody></table></div>` : `<div class="empty">No applications yet. Add the first one above.</div>`}
   </section>`;
@@ -572,6 +589,9 @@ function viewInsights(){
   }
   const tk=days.slice(-7).reduce((a,x)=>{ const l=(x.d&&x.d.tasks)||[]; a.t+=l.length; a.d+=l.filter(y=>y.done).length; return a; },{t:0,d:0});
   if(tk.t) F.push(`You finished <b class="num">${tk.d}</b> of <b class="num">${tk.t}</b> to-do tasks this week (${Math.round(tk.d/tk.t*100)}%).`);
+  { const bp={}; jobs().forEach(j=>{ if(!j.platform) return; const o=bp[j.platform]=bp[j.platform]||{n:0,r:0}; o.n++; if(["OA","Interview","Offer"].includes(j.status)) o.r++; });
+    const ps=Object.keys(bp).filter(k=>bp[k].n>=3).sort((a,b)=>bp[b].r/bp[b].n-bp[a].r/bp[a].n);
+    if(ps.length>=2) F.push(`Best platform so far: <b>${esc(ps[0])}</b>, with <b class="num">${Math.round(bp[ps[0]].r/bp[ps[0]].n*100)}%</b> of applications reaching a test or interview (vs ${Math.round(bp[ps[ps.length-1]].r/bp[ps[ps.length-1]].n*100)}% on ${esc(ps[ps.length-1])}).`); }
   const stale=jobs().filter(j=>j.status==="Applied"&&(parseKey(t)-parseKey(j.date))/864e5>=7).length;
   if(stale) F.push(`<b>${stale}</b> application${stale>1?"s have":" has"} had no reply for a week or more. Time for a follow-up.`);
 
@@ -672,7 +692,7 @@ function daysCSV(){
   return [head,...rows].map(r=>r.map(csvCell).join(",")).join("\n");
 }
 function jobsCSV(){
-  return [["company","role","applied_on","status"],...jobs().map(j=>[j.company,j.role,j.date,j.status])].map(r=>r.map(csvCell).join(",")).join("\n");
+  return [["company","role","applied_on","status","platform","job_link"],...jobs().map(j=>[j.company,j.role,j.date,j.status,j.platform||"",j.link||""])].map(r=>r.map(csvCell).join(",")).join("\n");
 }
 async function exportFile(name,data){
   const blob=new Blob([data],{type:"text/csv"});
@@ -693,7 +713,7 @@ function importCSV(text){
     rows.slice(1).forEach(r=>{ const company=(r[ix("company")]||"").trim(); if(!company) return;
       const role=(r[ix("role")]||"").trim(), date=(r[ix("applied_on")]||todayKey()).trim(), st=(r[ix("status")]||"Applied").trim();
       if(j.items.some(x=>x.company===company&&x.role===role&&x.date===date)) return;
-      j.items.push({id:uid(),company,role,date,status:STATUSES.includes(st)?st:"Applied"}); n++; });
+      j.items.push({id:uid(),company,role,date,status:STATUSES.includes(st)?st:"Applied",platform:ix("platform")>=0?(r[ix("platform")]||"").trim():"",link:ix("job_link")>=0?safeUrl(r[ix("job_link")]):""}); n++; });
     Store.save("jobs",j); return `Imported ${n} application${n===1?"":"s"}.`;
   }
   if(ix("date")>=0){
@@ -754,7 +774,9 @@ function bind(){
     setDay(sel,d=>{ d.time.push({id:uid(),cat:$("#tcat").value,start:st,end:en,label:$("#tlabel").value.trim()}); }); render(); toast("Block added"); };
   document.querySelectorAll("[data-deltime]").forEach(b=>b.onclick=()=>{ setDay(sel,d=>{ d.time=d.time.filter(e=>e.id!==b.dataset.deltime); }); render(); });
   const aj=$("#addjob"); if(aj) aj.onsubmit=e=>{ e.preventDefault(); const c=$("#jco").value.trim(); if(!c) return; const j=clone(Store.get("jobs")||{items:[]}); j.items=j.items||[];
-    j.items.push({id:uid(),company:c,role:$("#jrole").value.trim(),date:$("#jdate").value||todayKey(),status:$("#jstatus").value}); Store.save("jobs",j); render(); toast("Application added"); };
+    const rawLink=$("#jlink").value.trim(), link=safeUrl(rawLink);
+    if(rawLink && !link){ toast("That link doesn't look like a web address. Check it and try again."); return; }
+    j.items.push({id:uid(),company:c,role:$("#jrole").value.trim(),date:$("#jdate").value||todayKey(),status:$("#jstatus").value,link,platform:$("#jplat").value.trim()}); Store.save("jobs",j); render(); toast("Application added"); };
   document.querySelectorAll("[data-jobstatus]").forEach(s=>s.onchange=()=>{ const j=clone(Store.get("jobs")); const it=j.items.find(x=>x.id===s.dataset.jobstatus); if(it) it.status=s.value; Store.save("jobs",j); render(); });
   document.querySelectorAll("[data-deljob]").forEach(b=>b.onclick=()=>{ const j=clone(Store.get("jobs")); j.items=j.items.filter(x=>x.id!==b.dataset.deljob); Store.save("jobs",j); render(); });
   const ed=$("#exdays"); if(ed) ed.onclick=()=>exportFile("daybook-daily-log.csv",daysCSV());
