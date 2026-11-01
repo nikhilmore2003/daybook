@@ -197,3 +197,17 @@ Signed-in members can see each other's name, practice streak, stats, solved dail
 
 > **Daybook: Community Practice & Analytics PWA** · JavaScript, Supabase (PostgreSQL, Row Level Security, Edge Functions), Gemini API, PWA
 > Built a multi-user, offline-first tracker for habits, practice and job applications with a community leaderboard; AI generates a shared set of 35 daily interview questions (Excel, SQL, Python, Power BI, business cases) with answers unlocked after submission, enforced by Postgres row-level security; insights engine (streaks, sleep–productivity correlation, platform response rates) and CSV export for Pandas/Power BI.
+
+
+---
+
+# Version 3: Datasets, Run and auto-check
+
+1. Supabase → SQL Editor → run `supabase/schema_v3.sql`.
+2. Edge Functions → your function (`rapid-api`) → Code → paste the new `supabase/functions/daily-questions/index.ts` → Deploy.
+3. Upload `index.html` and `sw.js` to GitHub.
+4. Optional, to get today's questions in the new format right away (deletes today's set and its answers):
+   ```sql
+   delete from daily_sets where day = (now() at time zone 'Asia/Kolkata')::date;
+   ```
+   Then Edge Functions → Test → Send Request, wait a minute.
