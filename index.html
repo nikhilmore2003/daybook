@@ -204,9 +204,11 @@ textarea{resize:vertical;min-height:84px;line-height:1.5}
 .md code{font-family:var(--f-mono);font-size:.9em;background:var(--sunk);border-radius:4px;padding:1px 5px}
 .md pre.code{background:var(--sunk);border-radius:8px;padding:10px 12px;overflow-x:auto;margin:6px 0;font-size:13px;line-height:1.5}
 .md pre.code code{background:transparent;padding:0;white-space:pre}
-.md table.mdt{border-collapse:collapse;font-size:13px;margin:6px 0}
-.md table.mdt th,.md table.mdt td{border:1px solid var(--line);padding:4px 8px;text-align:left}
-.md table.mdt th{background:var(--sunk)}
+table.mdt{border-collapse:collapse;font-size:13px;margin:6px 0}
+table.mdt th,table.mdt td{border:1px solid var(--line);padding:4px 8px;text-align:left;white-space:nowrap}
+.md table.mdt td{white-space:normal}
+table.mdt th{background:var(--sunk);font-weight:600}
+.qdata .linkbtn{font-size:13px}
 .box{border-radius:8px;padding:10px 12px;background:var(--sunk)}
 .box h3{margin:0 0 6px;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600}
 .box.model{background:color-mix(in srgb,var(--good) 10%,transparent)}
@@ -228,6 +230,37 @@ textarea{resize:vertical;min-height:84px;line-height:1.5}
 .dlist .chipx{font-size:12px}
 .spin{display:inline-block;width:14px;height:14px;border:2px solid var(--line);border-top-color:var(--accent);border-radius:50%;animation:sp 1s linear infinite;vertical-align:-2px;margin-right:8px}
 @keyframes sp{to{transform:rotate(360deg)}}
+body.wide .wrap{max-width:1280px}
+.qwork{display:grid;gap:16px;grid-template-columns:minmax(0,1fr)}
+.qleft{display:grid;gap:12px;min-width:0;align-content:start;grid-template-columns:minmax(0,1fr)}
+.qdata{min-width:0;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:12px;display:grid;gap:8px;align-content:start}
+.qdata .dl{display:flex;gap:12px;flex-wrap:wrap}
+.qdata .tname{font-weight:600;font-size:13px;margin-top:4px}
+@media (max-width:999px){ .qwork > .qdata{order:-1} }
+@media (min-width:1000px){ .qwork{grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);align-items:start}
+  .qdata{position:sticky;top:calc(env(safe-area-inset-top,0px) + 130px);max-height:calc(100vh - 150px);overflow:auto} }
+table.xl{border-collapse:collapse;font-size:12.5px;font-family:var(--f-body)}
+table.xl th,table.xl td{border:1px solid var(--line);padding:3px 8px;white-space:nowrap}
+table.xl th{background:var(--sunk);color:var(--muted);font-weight:600;font-size:11px;text-align:center;min-width:28px}
+table.xl th.hl{background:var(--accent-soft);color:var(--accent)}
+table.xl td{background:var(--surface)}
+table.xl td.hd{font-weight:600}
+table.xl td.n{text-align:right;font-variant-numeric:tabular-nums}
+table.xl td.ans{background:var(--mark-soft);outline:2px solid var(--mark);outline-offset:-2px;text-align:center;font-weight:700;color:var(--warn)}
+textarea.code{font-family:var(--f-mono);font-size:13px;line-height:1.5;tab-size:4}
+.runout{border:1px solid var(--line);border-radius:8px;padding:10px 12px;display:grid;gap:6px;min-width:0}
+.runout pre{margin:0;white-space:pre-wrap;overflow-wrap:anywhere;font-family:var(--f-mono);font-size:12.5px}
+.runout.err{border-color:color-mix(in srgb,var(--bad) 50%,var(--line))}
+.runout.err b{color:var(--bad)}
+.runout .scalar{font-size:22px;font-weight:500}
+.verdict{border-radius:8px;padding:10px 12px;font-weight:600;font-size:14px}
+.verdict.ok{background:color-mix(in srgb,var(--good) 15%,transparent);color:var(--good)}
+.verdict.bad{background:color-mix(in srgb,var(--bad) 13%,transparent);color:var(--bad)}
+.verdict.warn{background:var(--mark-soft);color:var(--warn);font-weight:500}
+.tag{font-size:11px;font-weight:700;border-radius:4px;padding:1px 6px;margin-left:6px;text-transform:none;letter-spacing:0}
+.tag.ok{background:color-mix(in srgb,var(--good) 18%,transparent);color:var(--good)}
+.tag.bad{background:color-mix(in srgb,var(--bad) 15%,transparent);color:var(--bad)}
+pre.code-out{white-space:pre-wrap;overflow-wrap:anywhere;font-family:var(--f-mono);font-size:13px;margin:0}
 .tasks{list-style:none;margin:0;padding:0;display:grid}
 .task{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;padding:8px 0;border-top:1px solid var(--line)}
 .task:first-child{border-top:0}
@@ -305,7 +338,7 @@ textarea{resize:vertical;min-height:84px;line-height:1.5}
       </div>
       <nav class="tabs" id="tabs">
         <a href="#today" data-tab="today">Today</a>
-        <a href="#questions" data-tab="questions">Daily Qs</a>
+        <a href="#questions" data-tab="questions">Daily Practice</a>
         <a href="#community" data-tab="community">Community</a>
         <a href="#time" data-tab="time">Time log</a>
         <a href="#jobs" data-tab="jobs">Job hunt</a>
@@ -369,7 +402,7 @@ let lastDetailSubj = null;
 const DEFAULT_HABITS = [];
 const HABIT_IDEAS = [
   ["Job hunt","Apply to 2 jobs"],["Job hunt","Follow up on 1 application"],["Job hunt","Message 2 people on LinkedIn"],
-  ["Learning","Solve today's Daily Qs"],["Learning","Learn one new concept (30 min)"],["Learning","Portfolio project (1 hour)"],
+  ["Learning","Solve today's Daily Practice"],["Learning","Learn one new concept (30 min)"],["Learning","Portfolio project (1 hour)"],
   ["Learning","Revise yesterday's notes"],["Learning","Explain one answer out loud"],
   ["Health","Walk or exercise 30 min"],["Health","Sleep before 12 am"],["Health","Phone-free first hour"]];
 let editHabits=false;
@@ -495,8 +528,8 @@ function viewPractice(d){
       <div class="field" style="width:76px"><label class="label" for="dcount">Count</label><input type="number" id="dcount" min="1" max="99" value="1"></div>
       <button class="btn">Log</button>
     </form>
-    ${(d.pdetail||[]).length? `<div class="dlist">${d.pdetail.map(e=>{ const sx=sj.find(x=>x.id===e.sid); return `<span class="chipx">${esc(sx?sx.name:"Removed subject")} · ${esc(e.topic||"General")} · <span class="lvl lvl-${e.level}">${esc(e.level)}</span> ×${e.n}${e.src==="daily"?" · daily Q":""}<button data-deldetail="${e.id}" aria-label="Remove entry">×</button></span>`; }).join("")}</div>`
-      : `<p class="hint" style="margin:8px 0 0">Each entry also adds to that subject's count above. Solving a Daily Q logs itself here.</p>`}
+    ${(d.pdetail||[]).length? `<div class="dlist">${d.pdetail.map(e=>{ const sx=sj.find(x=>x.id===e.sid); return `<span class="chipx">${esc(sx?sx.name:"Removed subject")} · ${esc(e.topic||"General")} · <span class="lvl lvl-${e.level}">${esc(e.level)}</span> ×${e.n}${e.src==="daily"?" · daily practice":""}<button data-deldetail="${e.id}" aria-label="Remove entry">×</button></span>`; }).join("")}</div>`
+      : `<p class="hint" style="margin:8px 0 0">Each entry also adds to that subject's count above. Solving a Daily Practice question logs itself here.</p>`}
     <details style="margin-top:12px" id="subjdetails"><summary class="hint" style="cursor:pointer">Edit subjects and daily goals</summary>
       <div style="display:grid;gap:8px;margin-top:10px">${sj.map(x=>`<div class="row" style="align-items:center">
         <span style="flex:1;min-width:0">${esc(x.name)}</span>
@@ -840,9 +873,9 @@ const QFN = (window.DAYBOOK_CONFIG||{}).QUESTIONS_FUNCTION || "rapid-api";  // n
 const Net = { uid:null, me:null, meLoaded:false, isAdmin:false,
   members:[], membersAt:0, membersLoading:false,
   q:{ key:null, loading:false, status:null, error:null, day:null, list:[], mine:{}, solvers:[], polls:0 },
-  open:{}, detail:{}, drafts:{}, editing:{}, filter:"All",
+  open:{}, detail:{}, drafts:{}, editing:{}, run:{}, expected:{}, pbiVal:{}, filter:"All",
   admin:{ rows:null, loading:false, at:0, err:null }, lbSort:"streak", feedQ:"", feedPlat:"", feedN:40, syncT:null };
-function netReset(){ Object.assign(Net,{ uid:null, me:null, meLoaded:false, isAdmin:false, members:[], membersAt:0, open:{}, detail:{}, drafts:{}, editing:{} });
+function netReset(){ Object.assign(Net,{ uid:null, me:null, meLoaded:false, isAdmin:false, members:[], membersAt:0, open:{}, detail:{}, drafts:{}, editing:{}, run:{}, expected:{}, pbiVal:{} });
   Net.q={ key:null, loading:false, status:null, error:null, day:null, list:[], mine:{}, solvers:[], polls:0 }; Net.admin={ rows:null, loading:false, at:0, err:null }; }
 
 const md = src => String(src||"").split("```").map((p,i)=>{
@@ -931,7 +964,7 @@ async function loadQuestions(day,silent){
     Q.list=qs||[];
     Q.mine={};
     if(Q.list.length){
-      const {data:mine}=await sb.from("submissions").select("question_id,answer,created_at,updated_at").eq("user_id",Net.uid).in("question_id",Q.list.map(q=>q.id));
+      const {data:mine}=await sb.from("submissions").select("question_id,answer,created_at,updated_at,correct").eq("user_id",Net.uid).in("question_id",Q.list.map(q=>q.id));
       (mine||[]).forEach(m=>Q.mine[m.question_id]=m);
       const {data:sv}=await sb.rpc("daily_solvers",{p_day:day}); Q.solvers=sv||[];
     } else Q.solvers=[];
@@ -950,7 +983,7 @@ async function loadDetail(id){
   const D=Net.detail[id]={loading:true}; render();
   const [{data:sol},{data:ans}]=await Promise.all([
     sb.from("solutions").select("solution").eq("question_id",id).maybeSingle(),
-    sb.from("submissions").select("user_id,answer,created_at,updated_at").eq("question_id",id).order("created_at")]);
+    sb.from("submissions").select("user_id,answer,created_at,updated_at,correct").eq("question_id",id).order("created_at")]);
   D.loading=false; D.solution=sol&&sol.solution; D.answers=ans||[]; render();
 }
 async function submitAnswer(id){
@@ -960,17 +993,19 @@ async function submitAnswer(id){
   const first=!Net.q.mine[id];
   const btn=$("#sub-"+id); if(btn) btn.disabled=true;
   const now=new Date().toISOString();
-  const {error}=await sb.from("submissions").upsert({question_id:id,user_id:Net.uid,answer,updated_at:now},{onConflict:"question_id,user_id"});
+  const R=Net.run[id]; const correct=(R && R.correct!=null && String(R.code||"").trim()===answer)? R.correct : null;
+  const {error}=await sb.from("submissions").upsert({question_id:id,user_id:Net.uid,answer,correct,updated_at:now},{onConflict:"question_id,user_id"});
   if(btn) btn.disabled=false;
   if(error){ toast("Couldn't submit: "+error.message); return; }
-  Net.q.mine[id]={question_id:id,answer,created_at:(Net.q.mine[id]||{}).created_at||now,updated_at:now};
+  Net.q.mine[id]={question_id:id,answer,correct,created_at:(Net.q.mine[id]||{}).created_at||now,updated_at:now};
+  { const sv=Net.q.solvers.find(s=>s.question_id===id&&s.user_id===Net.uid); if(sv) sv.correct=correct; }
   delete Net.drafts[id]; Net.editing[id]=false;
   if(first){
-    if(!Net.q.solvers.some(s=>s.question_id===id&&s.user_id===Net.uid)) Net.q.solvers.push({question_id:id,user_id:Net.uid,display_name:Net.me.display_name,solved_at:now});
+    if(!Net.q.solvers.some(s=>s.question_id===id&&s.user_id===Net.uid)) Net.q.solvers.push({question_id:id,user_id:Net.uid,display_name:Net.me.display_name,solved_at:now,correct});
     let list=clone(subjects()); let sx=list.find(x=>x.name.toLowerCase()===q.subject.toLowerCase());
     if(!sx){ sx={id:"q-"+uid(),name:q.subject,goal:0}; list.push(sx); saveSubjects(list); }
     setDay(todayKey(),d=>{ d.pdetail=d.pdetail||[]; d.pdetail.push({id:uid(),sid:sx.id,topic:q.topic||"Daily question",level:q.level,n:1,src:"daily"}); d.practice=d.practice||{}; d.practice[sx.id]=(+d.practice[sx.id]||0)+1; });
-    toast("Submitted. Answers unlocked.");
+    toast(correct===true?"Submitted ✓ Correct. Answers unlocked.":"Submitted. Answers unlocked.");
   } else toast("Answer updated");
   loadDetail(id); scheduleMemberSync(800);
 }
@@ -980,6 +1015,248 @@ async function loadAdmin(){
   A.loading=false; A.at=Date.now(); A.rows=data||[]; A.err=error&&error.message;
   const t=todayKey(); if(Net.q.key!==t && !Net.q.loading) loadQuestions(t,true);
   if(tab==="admin") render();
+}
+
+/* ---------- daily practice: datasets, run engines, auto-check ---------- */
+const LIBS={
+  hf:{url:"https://cdn.jsdelivr.net/npm/hyperformula@2.7.1/dist/hyperformula.full.min.js", ok:()=>window.HyperFormula},
+  sql:{url:"https://cdn.jsdelivr.net/npm/sql.js@1.10.3/dist/sql-wasm.js", ok:()=>window.initSqlJs},
+  py:{url:"https://cdn.jsdelivr.net/pyodide/v0.26.4/full/pyodide.js", ok:()=>window.loadPyodide},
+  xlsx:{url:"https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js", ok:()=>window.XLSX}};
+const libP={};
+function loadLib(k){
+  if(libP[k]) return libP[k];
+  const L=LIBS[k];
+  libP[k]=new Promise((res,rej)=>{ if(L.ok()) return res(); const s=document.createElement("script"); s.src=L.url; s.async=true;
+    s.onload=()=>L.ok()? res() : rej(new Error("The engine loaded but didn't start."));
+    s.onerror=()=>{ delete libP[k]; rej(new Error("Couldn't download the engine. Check your internet and try again.")); };
+    document.head.appendChild(s); });
+  libP[k].catch(()=>{ delete libP[k]; });
+  return libP[k];
+}
+const toVal=v=>{ if(v==null) return null; const s=String(v).trim(); if(s==="") return null; if(/^-?\d+(\.\d+)?$/.test(s) && !/^0\d/.test(s)) return Number(s); return s; };
+const tablesOf=q=>(Array.isArray(q&&q.data)?q.data:[]).filter(t=>t&&Array.isArray(t.columns)&&Array.isArray(t.rows));
+const kindOf=q=>{ const s=String(q.subject||"").toLowerCase(); if(!tablesOf(q).length) return "";
+  return s==="excel"?"excel": s==="sql"?"sql": s==="python"?"python": s==="power bi"?"pbi":""; };
+const colName=n=>{ let s=""; n++; while(n>0){ const m=(n-1)%26; s=String.fromCharCode(65+m)+s; n=Math.floor((n-1)/26); } return s; };
+const cellPos=a=>{ const m=/^([A-Z]{1,2})(\d+)$/.exec(String(a||"").toUpperCase()); if(!m) return null; let c=0; for(const ch of m[1]) c=c*26+(ch.charCodeAt(0)-64); return {col:c-1,row:+m[2]-1}; };
+
+/* Excel: HyperFormula (formula engine), licensed for open-source use under GPLv3 */
+async function runExcel(q, formula){
+  await loadLib("hf");
+  const t=tablesOf(q)[0]; const pos=cellPos(q.answer_cell)||{col:t.columns.length+1,row:1};
+  const grid=[t.columns.slice(), ...t.rows.map(r=>t.columns.map((_,i)=>toVal(r[i])))];
+  let hf; try{ hf=HyperFormula.buildFromArray(grid,{licenseKey:"gpl-v3",dateFormats:["YYYY-MM-DD","DD/MM/YYYY","DD-MM-YYYY"]}); }
+  catch(e){ hf=HyperFormula.buildFromArray(grid,{licenseKey:"gpl-v3"}); }
+  try{
+    const f=String(formula||"").trim(); if(!f) return {error:"Type a formula first."};
+    hf.setCellContents({sheet:0,col:pos.col,row:pos.row},[[f.startsWith("=")?f:"="+f]]);
+    const v=hf.getCellValue({sheet:0,col:pos.col,row:pos.row});
+    if(v && typeof v==="object" && "type" in v) return {error:(v.value||"#ERROR")+(v.message?": "+v.message:"")};
+    return {columns:[q.answer_cell||"Result"], table:[[v]], scalar:true};
+  }catch(e){ return {error:e.message}; } finally{ hf.destroy(); }
+}
+
+/* SQL: SQLite running in the browser (sql.js) */
+let SQLP=null;
+function sqlEngine(){ if(!SQLP){ SQLP=loadLib("sql").then(()=>initSqlJs({locateFile:f=>"https://cdn.jsdelivr.net/npm/sql.js@1.10.3/dist/"+f})); SQLP.catch(()=>{ SQLP=null; }); } return SQLP; }
+const qid=s=>'"'+String(s).replace(/"/g,'""')+'"';
+async function runSql(q, query){
+  const SQL=await sqlEngine(); const db=new SQL.Database();
+  try{
+    tablesOf(q).forEach(t=>{ const cols=t.columns.map(qid);
+      db.run(`CREATE TABLE ${qid(t.name)} (${cols.join(",")})`);
+      const st=db.prepare(`INSERT INTO ${qid(t.name)} VALUES (${cols.map(()=>"?").join(",")})`);
+      t.rows.forEach(r=>st.run(t.columns.map((_,i)=>toVal(r[i])))); st.free(); });
+    const text=String(query||"").trim(); if(!text) return {error:"Type a query first."};
+    const res=db.exec(text); const last=res[res.length-1];
+    return last? {columns:last.columns, table:last.values} : {columns:[], table:[]};
+  }catch(e){ return {error:e.message}; } finally{ db.close(); }
+}
+
+/* Python: real Python + pandas in the browser (Pyodide) */
+let PYP=null;
+function pyEngine(){
+  if(!PYP){ PYP=(async()=>{ await loadLib("py"); const py=await loadPyodide({indexURL:"https://cdn.jsdelivr.net/pyodide/v0.26.4/full/"}); await py.loadPackage(["pandas"]); return py; })(); PYP.catch(()=>{ PYP=null; }); }
+  return PYP;
+}
+const PY_RUNNER=`
+import json, io, sys, pandas as pd, numpy as np
+def __daybook_run(tables_json, code):
+    ns = {"pd": pd, "np": np}
+    for t in json.loads(tables_json):
+        ns[t["name"]] = pd.DataFrame(t["rows"], columns=t["columns"])
+    buf = io.StringIO(); old = sys.stdout; sys.stdout = buf; err = None
+    try:
+        exec(code, ns)
+    except Exception as e:
+        err = f"{type(e).__name__}: {e}"
+    finally:
+        sys.stdout = old
+    def conv(v):
+        if isinstance(v, pd.Series):
+            v = v.reset_index() if not isinstance(v.index, pd.RangeIndex) else v.to_frame()
+        if isinstance(v, pd.DataFrame):
+            d = v.reset_index() if not isinstance(v.index, pd.RangeIndex) else v
+            return {"columns": [str(c) for c in d.columns], "rows": json.loads(d.to_json(orient="values", date_format="iso"))}
+        if isinstance(v, np.ndarray): v = v.tolist()
+        if isinstance(v, (list, tuple, set)):
+            return {"columns": ["value"], "rows": [[x.item() if isinstance(x, np.generic) else x] for x in v]}
+        if isinstance(v, np.generic): v = v.item()
+        return {"columns": ["result"], "rows": [[v]], "scalar": True}
+    has = "result" in ns
+    res = None
+    if has and err is None:
+        try: res = conv(ns["result"])
+        except Exception as e: err = f"Couldn't read result: {e}"
+    return json.dumps({"stdout": buf.getvalue()[-4000:], "error": err, "has": has, "result": res}, default=str)
+`;
+async function runPython(q, code){
+  const py=await pyEngine();
+  if(!py.__daybook){ py.runPython(PY_RUNNER); py.__daybook=py.globals.get("__daybook_run"); }
+  const tbl=JSON.stringify(tablesOf(q).map(t=>({name:t.name,columns:t.columns,rows:t.rows.map(r=>t.columns.map((_,i)=>toVal(r[i])))})));
+  if(!String(code||"").trim()) return {error:"Type your code first."};
+  const o=JSON.parse(py.__daybook(tbl,String(code)));
+  if(o.error) return {error:o.error, stdout:o.stdout};
+  if(!o.has) return {error:"Store your final answer in a variable named result.", stdout:o.stdout};
+  return {columns:o.result.columns, table:o.result.rows, scalar:!!o.result.scalar, stdout:o.stdout};
+}
+
+/* compare a learner's output with the checker's output */
+function normCell(v){
+  if(v==null) return "";
+  if(typeof v==="boolean") return v?"1":"0";
+  const s=String(v).trim().replace(/^₹\s*/,"");
+  if(/^-?[\d,]*\.?\d+$/.test(s)){ const n=Number(s.replace(/,/g,"")); if(!isNaN(n)) return String(Math.round(n*100)/100); }
+  if(/^(true|false)$/i.test(s)) return /^true$/i.test(s)?"1":"0";
+  return s.toLowerCase();
+}
+function sameResult(a,b,ordered){
+  if(!a||!b||a.error||b.error) return false;
+  const A=(a.table||[]).map(r=>r.map(normCell)), B=(b.table||[]).map(r=>r.map(normCell));
+  const cmp=(X,Y)=>{ if(X.length!==Y.length) return false; if(X.some((r,i)=>r.length!==Y[i].length)) return false;
+    const x=X.map(r=>JSON.stringify(r)), y=Y.map(r=>JSON.stringify(r)); if(!ordered){ x.sort(); y.sort(); } return x.every((s,i)=>s===y[i]); };
+  if(cmp(A,B)) return true;
+  const drop=T=>T.map(r=>r.slice(1));
+  if(A[0]&&B[0]&&A[0].length===B[0].length+1&&cmp(drop(A),B)) return true;   // extra index column
+  if(A[0]&&B[0]&&B[0].length===A[0].length+1&&cmp(A,drop(B))) return true;
+  return false;
+}
+async function runChecker(q){
+  const k=kindOf(q); if(!q.checker) return null;
+  if(k==="excel") return runExcel(q,q.checker);
+  if(k==="sql"||k==="pbi") return runSql(q,q.checker);
+  if(k==="python") return runPython(q,q.checker);
+  return null;
+}
+async function runQuestion(id){
+  const q=Net.q.list.find(x=>x.id===id); if(!q) return;
+  const k=kindOf(q); const code=Net.drafts[id]!=null? Net.drafts[id] : ((Net.q.mine[id]||{}).answer||"");
+  const R=Net.run[id]={busy:true, note: k==="python"&&!PYP? "Starting Python for the first time (about 15 MB, 20–40 seconds)…" : k==="sql"&&!SQLP? "Starting the SQL engine…" : "Running…"}; render();
+  try{
+    let mine;
+    if(k==="excel") mine=await runExcel(q,code);
+    else if(k==="sql") mine=await runSql(q,code);
+    else if(k==="python") mine=await runPython(q,code);
+    else if(k==="pbi"){ const v=(Net.pbiVal[id]||"").trim(); if(!v){ R.busy=false; R.mine={error:"Enter the number your measure returns."}; render(); return; } mine={columns:["Your value"],table:[[v]],scalar:true}; }
+    if(!(id in Net.expected)) Net.expected[id]=await runChecker(q).catch(e=>({error:e.message}));
+    const exp=Net.expected[id];
+    R.mine=mine; R.code=code;
+    R.checkable=!!(exp && !exp.error);
+    R.correct = R.checkable && !mine.error ? sameResult(mine,exp,k==="sql"&&/order\s+by/i.test(q.checker)) : null;
+    if(R.checkable && !R.correct && exp.table && !exp.scalar) R.expShape=`${exp.table.length} row${exp.table.length===1?"":"s"} × ${(exp.table[0]||[]).length} column${(exp.table[0]||[]).length===1?"":"s"}`;
+  }catch(e){ R.mine={error:e.message}; }
+  R.busy=false; render();
+}
+
+/* ---------- practice views ---------- */
+const fmtCell=v=>{ if(v==null) return ""; if(typeof v==="number") return String(Math.round(v*10000)/10000); return String(v); };
+function viewResult(r){
+  if(!r) return "";
+  if(r.error) return `<div class="runout err"><b>Error</b><pre>${esc(r.error)}</pre>${r.stdout?`<div class="label">Printed output</div><pre>${esc(r.stdout)}</pre>`:""}</div>`;
+  const rows=(r.table||[]).slice(0,50);
+  return `<div class="runout">${r.stdout?`<div class="label">Printed output</div><pre>${esc(r.stdout)}</pre>`:""}
+    ${r.scalar? `<div class="label">Result</div><div class="scalar num">${esc(fmtCell((r.table[0]||[])[0]))}</div>`
+      : `<div class="label">Result · ${(r.table||[]).length} row${(r.table||[]).length===1?"":"s"}</div><div class="tablewrap"><table class="mdt"><thead><tr>${(r.columns||[]).map(c=>`<th>${esc(c)}</th>`).join("")}</tr></thead><tbody>${rows.map(rw=>`<tr>${rw.map(c=>`<td>${esc(fmtCell(c))}</td>`).join("")}</tr>`).join("")}</tbody></table></div>${(r.table||[]).length>50?`<p class="hint">Showing the first 50 rows.</p>`:""}`}</div>`;
+}
+function viewVerdict(R){
+  if(!R||R.busy||!R.mine||R.mine.error) return "";
+  if(!R.checkable) return `<div class="verdict warn">Auto-check isn't available for this question. Compare with the model answer after you submit.</div>`;
+  return R.correct? `<div class="verdict ok">✓ Correct. Your output matches the expected result. Submit it to lock it in.</div>`
+    : `<div class="verdict bad">✗ Not matching yet.${R.expShape?` The expected result has ${R.expShape}.`:""} Check your logic and run again.</div>`;
+}
+function viewData(q){
+  const ts=tablesOf(q), k=kindOf(q); if(!ts.length) return "";
+  let html=`<aside class="qdata"><div class="row" style="justify-content:space-between;align-items:center;margin-bottom:6px"><div class="label">Dataset</div><div class="dl">`;
+  html+= k==="excel"? `<button class="linkbtn" data-dl="xlsx" data-q="${q.id}">Download .xlsx</button>` : "";
+  html+= `<button class="linkbtn" data-dl="csv" data-q="${q.id}">CSV</button>`;
+  html+= k==="sql"? `<button class="linkbtn" data-dl="sql" data-q="${q.id}">.sql</button>` : k==="python"? `<button class="linkbtn" data-dl="py" data-q="${q.id}">.py starter</button>` : "";
+  html+=`</div></div>`;
+  if(k==="excel"){
+    const t=ts[0], pos=cellPos(q.answer_cell);
+    const nCols=Math.max(t.columns.length, pos?pos.col+1:0), nRows=Math.max(t.rows.length+1, pos?pos.row+1:0);
+    const val=(r,c)=> r===0? (t.columns[c]??"") : ((t.rows[r-1]||[])[c]??"");
+    html+=`<div class="tablewrap"><table class="xl"><thead><tr><th class="corner"></th>${Array.from({length:nCols},(_,c)=>`<th${pos&&pos.col===c?' class="hl"':""}>${colName(c)}</th>`).join("")}</tr></thead><tbody>`;
+    for(let r=0;r<nRows;r++){
+      html+=`<tr><th${pos&&pos.row===r?' class="hl"':""}>${r+1}</th>${Array.from({length:nCols},(_,c)=>{
+        const ans=pos&&pos.row===r&&pos.col===c;
+        return `<td class="${r===0&&c<t.columns.length?"hd":""}${ans?" ans":""}${/^-?\d+(\.\d+)?$/.test(String(val(r,c)))?" n":""}">${ans?"?":esc(val(r,c))}</td>`; }).join("")}</tr>`;
+    }
+    html+=`</tbody></table></div>${pos?`<p class="hint" style="margin:6px 0 0">Your formula goes in the highlighted cell <b>${esc(q.answer_cell)}</b>.</p>`:""}`;
+  } else {
+    ts.forEach(t=>{ html+=`<div class="tname num">${esc(t.name)}${k==="python"?` <span class="hint">DataFrame</span>`:""}</div><div class="tablewrap"><table class="mdt"><thead><tr>${t.columns.map(c=>`<th>${esc(c)}</th>`).join("")}</tr></thead><tbody>${t.rows.map(r=>`<tr>${t.columns.map((_,i)=>`<td>${esc(r[i]??"")}</td>`).join("")}</tr>`).join("")}</tbody></table></div>`; });
+  }
+  return html+`</aside>`;
+}
+function viewQuestionBody(q, mine, D, n, names){
+  const k=kindOf(q), R=Net.run[q.id], editing=!mine||Net.editing[q.id];
+  const draft=Net.drafts[q.id]!=null? Net.drafts[q.id] : (mine?mine.answer:"");
+  const ph={excel:`=COUNTIFS(...)`, sql:"SELECT ...\nFROM ...", python:`result = ...`, pbi:"Measure = CALCULATE(...)"}[k]||"Write your formula, query, code or approach";
+  const label={excel:`Your formula for ${q.answer_cell||"the answer cell"}`, sql:"Your SQL query (SQLite)", python:"Your Python code", pbi:"Your DAX measure"}[k]||"Your answer";
+  let left="";
+  if(editing){
+    left+=`<div class="field"><label class="label" for="ans-${q.id}">${mine?"Edit: ":""}${label}</label><textarea id="ans-${q.id}" data-draft="${q.id}" spellcheck="false" class="code" style="min-height:${k==="excel"?70:130}px" placeholder="${esc(ph)}">${esc(draft)}</textarea></div>`;
+    if(k==="pbi") left+=`<div class="field" style="max-width:260px"><label class="label" for="pv-${q.id}">Value your measure returns</label><input type="text" inputmode="decimal" id="pv-${q.id}" data-pbival="${q.id}" value="${esc(Net.pbiVal[q.id]||"")}" placeholder="e.g. 125000"></div>`;
+    left+=`<div class="row">${k?`<button class="btn ghost" data-run="${q.id}" ${R&&R.busy?"disabled":""}>${k==="pbi"?"Check value":"▶ Run"}</button>`:""}<button class="btn" id="sub-${q.id}" data-submit="${q.id}">${mine?"Save answer":"Submit answer"}</button>${mine?`<button class="btn ghost" data-canceledit="${q.id}">Cancel</button>`:""}</div>`;
+    left+= k? `<p class="hint" style="margin:0">${k==="python"?"Your tables are ready as DataFrames. Put the answer in <code>result</code>. ":""}${k==="pbi"?"Build the measure in Power BI with the downloaded data, then enter the number it returns. ":""}Run as often as you like. The model answer and others' answers unlock after you submit.</p>`
+      : `<p class="hint" style="margin:0">The model answer and others' answers unlock after you submit.</p>`;
+    if(R&&R.busy) left+=`<div class="hint"><span class="spin"></span>${esc(R.note||"Running…")}</div>`;
+    else if(R) left+=viewVerdict(R)+(k==="pbi"&&!(R.mine&&R.mine.error)?"":viewResult(R.mine));
+  }
+  if(mine){
+    if(!Net.editing[q.id]) left+=`<div class="box"><h3>Your answer ${mine.correct===true?`<span class="tag ok">✓ correct</span>`:mine.correct===false?`<span class="tag bad">not matching</span>`:""}</h3><pre class="code-out">${esc(mine.answer)}</pre><button class="linkbtn" data-edit="${q.id}" style="margin-top:8px">${k?"Edit and run again":"Edit answer"}</button></div>`;
+    if(!D || D.loading) left+=`<div class="hint"><span class="spin"></span>Loading answers…</div>`;
+    else{
+      if(D.solution) left+=`<div class="box model"><h3>Model answer (AI)</h3><div class="md">${md(D.solution)}</div></div>`;
+      const others=(D.answers||[]).filter(a=>a.user_id!==Net.uid);
+      const nm=id=>{ const s=Net.q.solvers.find(x=>x.user_id===id); return s? s.display_name : "Member"; };
+      left+=`<div class="box"><h3>Others' answers (${others.length})</h3>${others.length? others.map(a=>`<div class="ans"><div class="who">${esc(nm(a.user_id))}${a.correct===true?`<span class="tag ok">✓</span>`:""}<span>${ago(a.created_at)}</span></div><pre>${esc(a.answer)}</pre></div>`).join("") : `<p class="hint" style="margin:0">Nobody else has answered yet.</p>`}</div>`;
+    }
+  }
+  if(n) left+=`<div><div class="label" style="margin-bottom:6px">Solved by</div><div class="solvers">${(names[q.id]||[]).map(s=>`<span>${s.correct?"✓ ":""}${esc(s.display_name)}${s.user_id===Net.uid?" (you)":""}</span>`).join("")}</div></div>`;
+  const data=viewData(q);
+  return `<div class="qbody"><div class="md">${md(q.prompt)}</div>${data?`<div class="qwork"><div class="qleft">${left}</div>${data}</div>`:`<div class="qleft">${left}</div>`}</div>`;
+}
+
+/* downloads */
+function saveBlob(name, blob){
+  const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download=name; document.body.appendChild(a); a.click();
+  setTimeout(()=>{ URL.revokeObjectURL(a.href); a.remove(); },1500);
+}
+async function downloadData(id, kind){
+  const q=Net.q.list.find(x=>x.id===id); if(!q) return; const ts=tablesOf(q);
+  const slug=String(q.title||"question").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"").slice(0,40)||"question";
+  const csv=t=>[t.columns,...t.rows].map(r=>r.map(csvCell).join(",")).join("\n");
+  try{
+    if(kind==="csv"){ ts.forEach(t=>saveBlob(`${t.name}.csv`, new Blob([csv(t)],{type:"text/csv"}))); }
+    else if(kind==="xlsx"){ await loadLib("xlsx"); const wb=XLSX.utils.book_new(); ts.forEach((t,i)=>XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet([t.columns,...t.rows.map(r=>t.columns.map((_,j)=>toVal(r[j])))]), i===0&&kindOf(q)==="excel"?"Sheet1":t.name.slice(0,31))); XLSX.writeFile(wb, `${slug}.xlsx`); }
+    else if(kind==="sql"){ const lit=v=>{ const x=toVal(v); return x==null?"NULL": typeof x==="number"? String(x) : "'"+String(x).replace(/'/g,"''")+"'"; };
+      const text=ts.map(t=>`CREATE TABLE ${t.name} (\n  ${t.columns.map(c=>`${c} ${t.rows.every(r=>typeof toVal(r[t.columns.indexOf(c)])==="number"||toVal(r[t.columns.indexOf(c)])==null)?"DECIMAL(12,2)":"VARCHAR(100)"}`).join(",\n  ")}\n);\nINSERT INTO ${t.name} VALUES\n${t.rows.map(r=>"  ("+t.columns.map((_,i)=>lit(r[i])).join(", ")+")").join(",\n")};\n`).join("\n");
+      saveBlob(`${slug}.sql`, new Blob([`-- ${q.title}\n-- Works in MySQL and PostgreSQL. Create the tables, then write your query.\n\n`+text],{type:"text/plain"})); }
+    else if(kind==="py"){ ts.forEach(t=>saveBlob(`${t.name}.csv`, new Blob([csv(t)],{type:"text/csv"})));
+      const text=`# ${q.title}\n# Keep the CSV file(s) in the same folder as this script.\nimport pandas as pd\n\n${ts.map(t=>`${t.name} = pd.read_csv("${t.name}.csv")`).join("\n")}\n\n# Your code here. Store the final answer in result.\nresult = None\nprint(result)\n`;
+      saveBlob(`${slug}.py`, new Blob([text],{type:"text/x-python"})); }
+  }catch(e){ toast("Couldn't create the file: "+e.message); }
 }
 
 /* ---------- views ---------- */
@@ -992,7 +1269,7 @@ function viewNamePanel(){
 }
 function viewQuestions(){
   const Q=Net.q, t=todayKey();
-  const head=(sub)=>`<section class="panel"><h2>Daily questions</h2><p class="sub">${sub}</p>`;
+  const head=(sub)=>`<section class="panel"><h2>Daily practice</h2><p class="sub">${sub}</p>`;
   if(Q.key!==sel || (Q.loading && !Q.list.length && Q.status!=="generating")) return head("Same questions for everyone, new set every day.")+`<div class="empty"><span class="spin"></span>Loading questions…</div></section>`;
   if(Q.status==="generating" && !Q.list.length) return head("Same questions for everyone, new set every day.")+`<div class="empty"><span class="spin"></span>AI is writing today's questions. This takes about a minute. You can leave this page; they'll be here when you're back.</div></section>`;
   if(Q.status==="nofunction") return head("Same questions for everyone, new set every day.")+`<div class="empty">Daily questions aren't switched on yet.${Net.isAdmin?`<br><span class="hint">Admin: deploy the <b>${esc(QFN)}</b> function and add the GEMINI_API_KEY secret (README, part 2). Error: ${esc(Q.error||"")}</span>`:""}</div></section>`;
@@ -1019,29 +1296,11 @@ function viewQuestions(){
     html+=`<section class="panel"><h2>${esc(sub)}</h2><div class="qlist" style="margin-top:10px">${qs.map(q=>{
       const mine=Q.mine[q.id], open=!!Net.open[q.id], D=Net.detail[q.id], n=cnt[q.id]||0;
       let body="";
-      if(open){
-        body=`<div class="qbody"><div class="md">${md(q.prompt)}</div>`;
-        if(!mine || Net.editing[q.id]){
-          body+=`<div class="field"><label class="label" for="ans-${q.id}">${mine?"Edit your answer":"Your answer"}</label><textarea id="ans-${q.id}" data-draft="${q.id}" style="font-family:var(--f-mono);font-size:13px;min-height:120px" placeholder="Write your formula, query, code or approach">${esc(Net.drafts[q.id]!=null?Net.drafts[q.id]:(mine?mine.answer:""))}</textarea></div>
-            <div class="row"><button class="btn" id="sub-${q.id}" data-submit="${q.id}">${mine?"Save answer":"Submit answer"}</button>${mine?`<button class="btn ghost" data-canceledit="${q.id}">Cancel</button>`:`<span class="hint">The model answer and others' answers unlock after you submit.</span>`}</div>`;
-        }
-        if(mine){
-          if(!Net.editing[q.id]) body+=`<div class="box"><h3>Your answer</h3><pre style="white-space:pre-wrap;overflow-wrap:anywhere;font-family:var(--f-mono);font-size:13px;margin:0">${esc(mine.answer)}</pre><button class="linkbtn" data-edit="${q.id}" style="margin-top:8px">Edit answer</button></div>`;
-          if(!D || D.loading) body+=`<div class="hint"><span class="spin"></span>Loading answers…</div>`;
-          else{
-            if(D.solution) body+=`<div class="box model"><h3>Model answer (AI)</h3><div class="md">${md(D.solution)}</div></div>`;
-            const others=(D.answers||[]).filter(a=>a.user_id!==Net.uid);
-            const nm=id=>{ const s=Q.solvers.find(x=>x.user_id===id); return s? s.display_name : "Member"; };
-            body+=`<div class="box"><h3>Others' answers (${others.length})</h3>${others.length? others.map(a=>`<div class="ans"><div class="who">${esc(nm(a.user_id))}<span>${ago(a.created_at)}</span></div><pre>${esc(a.answer)}</pre></div>`).join("") : `<p class="hint" style="margin:0">Nobody else has answered yet.</p>`}</div>`;
-          }
-        }
-        if(n) body+=`<div><div class="label" style="margin-bottom:6px">Solved by</div><div class="solvers">${(names[q.id]||[]).map(s=>`<span>${esc(s.display_name)}${s.user_id===Net.uid?" (you)":""}</span>`).join("")}</div></div>`;
-        body+=`</div>`;
-      }
+      if(open) body=viewQuestionBody(q, mine, D, n, names);
       return `<article class="qcard ${mine?"solved":""}"><button class="qhead" data-qopen="${q.id}" aria-expanded="${open}">
         <span class="lvl lvl-${q.level}">${esc(q.level)}</span>
         <span class="qt">${esc(q.title)}<span class="qm">${esc(q.topic||"")}</span></span>
-        <span class="qs">${mine?"✓ solved · ":""}${n} solved</span></button>${body}</article>`;
+        <span class="qs">${mine?(mine.correct===true?"✓ correct · ":mine.correct===false?"submitted · ":"✓ solved · "):""}${n} solved</span></button>${body}</article>`;
     }).join("")}</div></section>`;
   });
   return html;
@@ -1067,16 +1326,16 @@ function viewCommunity(){
   <div class="kpis">
     <div class="kpi"><b>${ms.length}</b><span>Members</span></div>
     <div class="kpi"><b>${activeToday}</b><span>Active today</span></div>
-    <div class="kpi"><b>${todaySolves}</b><span>Daily Qs solved today</span></div>
+    <div class="kpi"><b>${todaySolves}</b><span>Daily Practice solved today</span></div>
     <div class="kpi"><b>${Net.me?Net.me.streak:0}d</b><span>Your practice streak</span></div>
   </div>
   <section class="panel"><h2>Leaderboard</h2><p class="sub">Practice streak = days in a row with at least one question solved.</p>
-    <div class="qfilters" style="margin:0 0 6px">${[["streak","Streak"],["solved","Daily Qs solved"],["week","Practice this week"]].map(([k,l])=>`<button class="chip ${Net.lbSort===k?"on":""}" data-lbsort="${k}">${l}</button>`).join("")}</div>
-    ${lb.length? `<div class="tablewrap"><table class="jobs lb"><thead><tr><th>#</th><th>Member</th><th class="n">Streak</th><th class="n">Best</th><th class="n">Daily Qs</th><th class="n">7-day practice</th></tr></thead><tbody>
+    <div class="qfilters" style="margin:0 0 6px">${[["streak","Streak"],["solved","Daily Practice solved"],["week","Practice this week"]].map(([k,l])=>`<button class="chip ${Net.lbSort===k?"on":""}" data-lbsort="${k}">${l}</button>`).join("")}</div>
+    ${lb.length? `<div class="tablewrap"><table class="jobs lb"><thead><tr><th>#</th><th>Member</th><th class="n">Streak</th><th class="n">Best</th><th class="n">Daily Practice</th><th class="n">7-day practice</th></tr></thead><tbody>
       ${lb.map((m,i)=>`<tr><td class="rank">${i+1}</td><td><b>${esc(m.display_name)}</b>${m.user_id===Net.uid?`<span class="you">You</span>`:""}</td><td class="n">${m.streak>=3?"🔥 ":""}${m.streak}d</td><td class="n">${m.best_streak}d</td><td class="n">${m.solved_total}</td><td class="n">${m.practice_7d}</td></tr>`).join("")}
     </tbody></table></div>` : `<div class="empty">No members yet.</div>`}
   </section>
-  <section class="panel"><h2>Today's daily question solvers</h2><p class="sub">Open <a href="#questions">Daily Qs</a> to see who solved each question.</p>
+  <section class="panel"><h2>Today's Daily Practice solvers</h2><p class="sub">Open <a href="#questions">Daily Practice</a> to see who solved each question.</p>
     ${top.length? `<div class="hbars">${top.map((o,i)=>`<div class="hbar"><span>${esc(o.name)}${o.uid===Net.uid?" (you)":""}</span><span class="t"><b style="width:${o.n/Math.max(1,top[0].n)*100}%;background:var(--c${(i%8)+1})"></b></span><span class="v">${o.n}</span></div>`).join("")}</div>` : `<div class="empty">Nobody has solved today's questions yet. Be the first.</div>`}
   </section>
   <section class="panel"><h2>Where members are applying</h2>
@@ -1096,13 +1355,13 @@ function viewAdmin(){
   return `<section class="panel"><h2>Today's questions</h2>
     <p class="sub">Status: <b>${esc(Q.key===t? (Q.status||"–") : "–")}</b>${Q.key===t?` · <span class="num">${Q.list.length}</span> questions · <span class="num">${Q.solvers.length}</span> answers`:""}</p>
     ${Q.key===t && Q.error?`<p class="notice">${esc(Q.error)}</p>`:""}
-    <div class="row"><button class="btn ghost small" id="retrygen">Generate missing questions</button><a class="btn ghost small" href="#questions" style="text-decoration:none">Open Daily Qs</a></div>
+    <div class="row"><button class="btn ghost small" id="retrygen">Generate missing questions</button><a class="btn ghost small" href="#questions" style="text-decoration:none">Open Daily Practice</a></div>
   </section>
   <section class="panel"><h2>Members</h2>
     <p class="sub"><span class="num">${rows.length}</span> accounts. Passwords are never visible to anyone; Supabase stores them scrambled.</p>
     ${A.err?`<p class="notice">${esc(A.err)}</p>`:""}
     ${A.loading&&!rows.length?`<div class="empty"><span class="spin"></span>Loading…</div>`:""}
-    ${rows.length? `<div class="tablewrap"><table class="jobs lb"><thead><tr><th>Name</th><th>Email</th><th>Joined</th><th>Last sign-in</th><th class="n">Streak</th><th class="n">Daily Qs</th><th class="n">7-day</th><th class="n">Apps</th></tr></thead><tbody>
+    ${rows.length? `<div class="tablewrap"><table class="jobs lb"><thead><tr><th>Name</th><th>Email</th><th>Joined</th><th>Last sign-in</th><th class="n">Streak</th><th class="n">Daily Practice</th><th class="n">7-day</th><th class="n">Apps</th></tr></thead><tbody>
       ${rows.map(r=>`<tr><td><b>${esc(r.display_name||"(no name yet)")}</b></td><td>${esc(r.email)}</td><td class="age">${esc((r.joined||"").slice(0,10))}</td><td class="age">${r.last_sign_in?ago(r.last_sign_in):"never"}</td>
         <td class="n">${r.streak}d</td><td class="n">${r.solved_total}</td><td class="n">${r.practice_7d}</td><td class="n">${r.applications}</td></tr>`).join("")}
     </tbody></table></div>
@@ -1114,7 +1373,12 @@ function bindNet(){
   const rn=$("#rename"); if(rn) rn.onsubmit=async e=>{ e.preventDefault(); if(await saveName($("#renameinput").value)){ toast("Name saved"); render(); } };
   document.querySelectorAll("[data-qfilter]").forEach(b=>b.onclick=()=>{ Net.filter=b.dataset.qfilter; render(); });
   document.querySelectorAll("[data-qopen]").forEach(b=>b.onclick=()=>{ const id=+b.dataset.qopen; Net.open[id]=!Net.open[id]; if(Net.open[id] && Net.q.mine[id] && !Net.detail[id]) loadDetail(id); else render(); });
-  document.querySelectorAll("[data-draft]").forEach(ta=>ta.oninput=()=>{ Net.drafts[+ta.dataset.draft]=ta.value; });
+  document.querySelectorAll("[data-draft]").forEach(ta=>{ ta.oninput=()=>{ Net.drafts[+ta.dataset.draft]=ta.value; };
+    ta.onkeydown=e=>{ if(e.key==="Tab"&&!e.shiftKey){ e.preventDefault(); const a=ta.selectionStart,b=ta.selectionEnd; ta.value=ta.value.slice(0,a)+"    "+ta.value.slice(b); ta.selectionStart=ta.selectionEnd=a+4; Net.drafts[+ta.dataset.draft]=ta.value; }
+      if(e.key==="Enter"&&(e.ctrlKey||e.metaKey)){ e.preventDefault(); Net.drafts[+ta.dataset.draft]=ta.value; runQuestion(+ta.dataset.draft); } }; });
+  document.querySelectorAll("[data-run]").forEach(b=>b.onclick=()=>{ const id=+b.dataset.run; const ta=$("#ans-"+id); if(ta) Net.drafts[id]=ta.value; runQuestion(id); });
+  document.querySelectorAll("[data-pbival]").forEach(inp=>inp.oninput=()=>{ Net.pbiVal[+inp.dataset.pbival]=inp.value; });
+  document.querySelectorAll("[data-dl]").forEach(b=>b.onclick=()=>downloadData(+b.dataset.q, b.dataset.dl));
   document.querySelectorAll("[data-submit]").forEach(b=>b.onclick=()=>submitAnswer(+b.dataset.submit));
   document.querySelectorAll("[data-edit]").forEach(b=>b.onclick=()=>{ Net.editing[+b.dataset.edit]=true; render(); });
   document.querySelectorAll("[data-canceledit]").forEach(b=>b.onclick=()=>{ const id=+b.dataset.canceledit; Net.editing[id]=false; delete Net.drafts[id]; render(); });
@@ -1134,6 +1398,7 @@ function render(){
   renderChrome();
   const v=$("#view");
   if(tab==="admin" && !Net.isAdmin) tab="today";
+  document.body.classList.toggle("wide", tab==="questions");
   v.innerHTML = viewNamePanel() + (tab==="time"? viewTime() : tab==="jobs"? viewJobs() : tab==="insights"? viewInsights() : tab==="account"? viewAccount()
     : tab==="questions"? viewQuestions() : tab==="community"? viewCommunity() : tab==="admin"? viewAdmin() : viewToday());
   bind(); bindNet(); ensureData();

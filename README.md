@@ -6,7 +6,7 @@
 
 Sign up with any email. Works on laptop and phone, and installs on iPhone/Android like an app (Share → Add to Home Screen).
 
-![Daily questions](docs/screenshots/daily-questions.png)
+![Daily practice](docs/screenshots/daily-questions.png)
 
 ---
 
@@ -23,7 +23,7 @@ While preparing for data analyst roles, my practice, applications and habits wer
 
 | | |
 |---|---|
-| **Daily Qs** | Every night at 00:05 IST an AI writes 35 new questions (7 per subject: 2 easy, 3 medium, 2 hard). Everyone gets the same set. Submit your answer to unlock the model answer and other members' answers. |
+| **Daily Practice** | Every night at 00:05 IST an AI writes 35 new questions (7 per subject: 2 easy, 3 medium, 2 hard) on a real dataset per subject. Everyone gets the same set. You see the data as an Excel grid or tables, write your formula, SQL query or Python code, and press **Run** to see the output and whether it's correct. Submit to unlock the model answer and other members' answers. Data downloads as .xlsx, .csv, .sql or a .py starter. |
 | **Community** | Leaderboard by practice streak, questions solved and weekly practice; today's top solvers; every member's job applications with links, searchable by company and platform. |
 | **Today** | To-do list with carry-over, personal habits with streaks, mood / energy / productivity check-in, sleep, journal, and a practice log by subject, topic and difficulty. |
 | **Job hunt** | Application pipeline (Applied → Online test → Interview → Offer), job link and platform, response rate, follow-up nudges after 7 days. |
@@ -57,6 +57,7 @@ flowchart LR
   - users can only read and write their own private entries;
   - other members' answers and the model answer are readable only after you submit your own (`has_submitted()` check);
   - only admins can list members' emails (`admin_members()` function); passwords are never accessible.
+- **Run & auto-check in the browser:** Excel formulas run on HyperFormula, SQL on SQLite (sql.js, WebAssembly), Python on Pyodide (real Python + pandas in WebAssembly). The AI also writes a *checker* (reference formula / query / code); the app runs both on the same data and compares the outputs, so correctness never depends on the AI's arithmetic. Power BI answers are checked against a SQL reference query.
 - **AI pipeline:** a Supabase Edge Function (Deno/TypeScript) calls Gemini once per subject in parallel, forces a JSON response schema, validates and cleans the output, avoids repeating the last 3 weeks of questions, retries when the model is busy, and fills in only missing subjects on retry. A lock row makes sure only one generation runs per day.
 
 ### Data model (simplified)
@@ -72,7 +73,7 @@ flowchart LR
 
 ## Tech stack
 
-`JavaScript` · `HTML/CSS` · `PostgreSQL` · `Supabase (Auth, RLS, Edge Functions, pg_cron)` · `TypeScript / Deno` · `Gemini API` · `PWA / Service Worker` · `GitHub Pages`
+`JavaScript` · `HTML/CSS` · `PostgreSQL` · `SQLite (sql.js)` · `Pyodide` · `HyperFormula` · `Supabase (Auth, RLS, Edge Functions, pg_cron)` · `TypeScript / Deno` · `Gemini API` · `PWA / Service Worker` · `GitHub Pages`
 
 ## What I learned
 
@@ -91,10 +92,13 @@ sw.js, manifest.webmanifest    offline + install support
 config.js                      Supabase URL and public anon key
 supabase/schema.sql            private entries table + RLS
 supabase/schema_v2.sql         community, questions, admin + RLS
+supabase/schema_v3.sql         datasets, checkers, correct answers
 supabase/functions/daily-questions/index.ts   AI question generator
 supabase/cron.sql              nightly schedule
 ```
 
 ---
+
+Excel checks use [HyperFormula](https://hyperformula.handsontable.com/) under its GPLv3 licence.
 
 Built by **Nikhil More** · Data Analyst · Pune
