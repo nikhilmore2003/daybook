@@ -76,7 +76,7 @@ button{cursor:pointer}
 .banner p{margin:0;font-size:14px;max-width:52ch}
 .banner b{font-weight:600}
 
-main{display:grid;gap:16px;margin-top:16px}
+main{display:grid;gap:16px;margin-top:16px;grid-template-columns:minmax(0,1fr)}
 .panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:18px;min-width:0}
 .panel h2{font-family:var(--f-display);font-weight:700;font-size:19px;letter-spacing:-.01em;margin:0 0 4px;text-wrap:balance}
 .panel .sub{color:var(--muted);font-size:13px;margin:0 0 14px}
@@ -184,6 +184,50 @@ textarea{resize:vertical;min-height:84px;line-height:1.5}
 .byplat{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
 .byplat span{font-size:12px;background:var(--sunk);border-radius:99px;padding:3px 10px;color:var(--muted)}
 .byplat b{color:var(--ink);font-family:var(--f-mono);font-weight:500;margin-left:4px}
+.qfilters{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px}
+.chip{border:1px solid var(--line);background:var(--surface);border-radius:99px;padding:5px 12px;font-size:13px;font-weight:600;color:var(--muted)}
+.chip.on{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.qlist{display:grid;gap:8px;grid-template-columns:minmax(0,1fr)}
+.qcard{border:1px solid var(--line);border-radius:8px;min-width:0}
+.qcard.solved{border-color:color-mix(in srgb,var(--good) 45%,var(--line))}
+.qhead{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;width:100%;text-align:left;border:0;background:transparent;padding:12px}
+.qhead .qt{font-weight:600;min-width:0;overflow-wrap:anywhere}
+.qhead .qm{display:block;font-size:12px;color:var(--muted);font-weight:400;margin-top:2px}
+.qhead .qs{font-size:12px;font-family:var(--f-mono);color:var(--muted);white-space:nowrap}
+.qcard.solved .qs{color:var(--good)}
+.lvl{font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;border-radius:6px;padding:3px 7px;white-space:nowrap}
+.lvl-easy{background:color-mix(in srgb,var(--good) 16%,transparent);color:var(--good)}
+.lvl-medium{background:var(--mark-soft);color:var(--warn)}
+.lvl-hard{background:color-mix(in srgb,var(--bad) 15%,transparent);color:var(--bad)}
+.qbody{padding:0 12px 14px;display:grid;gap:12px;min-width:0;grid-template-columns:minmax(0,1fr)}
+.md{line-height:1.6;overflow-wrap:anywhere;min-width:0}
+.md code{font-family:var(--f-mono);font-size:.9em;background:var(--sunk);border-radius:4px;padding:1px 5px}
+.md pre.code{background:var(--sunk);border-radius:8px;padding:10px 12px;overflow-x:auto;margin:6px 0;font-size:13px;line-height:1.5}
+.md pre.code code{background:transparent;padding:0;white-space:pre}
+.md table.mdt{border-collapse:collapse;font-size:13px;margin:6px 0}
+.md table.mdt th,.md table.mdt td{border:1px solid var(--line);padding:4px 8px;text-align:left}
+.md table.mdt th{background:var(--sunk)}
+.box{border-radius:8px;padding:10px 12px;background:var(--sunk)}
+.box h3{margin:0 0 6px;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.box.model{background:color-mix(in srgb,var(--good) 10%,transparent)}
+.ans{border-top:1px solid var(--line);padding:10px 0 0;margin-top:10px}
+.ans:first-of-type{border-top:0;margin-top:0;padding-top:0}
+.ans .who{font-size:13px;font-weight:600;display:flex;gap:8px;align-items:baseline}
+.ans .who span{font-weight:400;color:var(--muted);font-size:12px}
+.ans pre{white-space:pre-wrap;overflow-wrap:anywhere;font-family:var(--f-mono);font-size:13px;margin:6px 0 0}
+.solvers{display:flex;flex-wrap:wrap;gap:6px}
+.solvers span{font-size:12px;background:var(--sunk);border-radius:99px;padding:2px 9px}
+.you{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;background:var(--accent);color:var(--accent-ink);border-radius:4px;padding:1px 5px;margin-left:6px;vertical-align:1px}
+.lb td.rank{font-family:var(--f-mono);color:var(--muted);width:2.5em}
+.lb td.n{font-family:var(--f-mono);text-align:right;white-space:nowrap}
+.lb th.n{text-align:right}
+.feedtools{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.feedtools input,.feedtools select{flex:1 1 160px;width:auto}
+.notice{font-size:13px;color:var(--muted);background:var(--sunk);border-radius:8px;padding:8px 12px;max-width:70ch}
+.dlist{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.dlist .chipx{font-size:12px}
+.spin{display:inline-block;width:14px;height:14px;border:2px solid var(--line);border-top-color:var(--accent);border-radius:50%;animation:sp 1s linear infinite;vertical-align:-2px;margin-right:8px}
+@keyframes sp{to{transform:rotate(360deg)}}
 .tasks{list-style:none;margin:0;padding:0;display:grid}
 .task{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;padding:8px 0;border-top:1px solid var(--line)}
 .task:first-child{border-top:0}
@@ -196,10 +240,10 @@ textarea{resize:vertical;min-height:84px;line-height:1.5}
 .pc{border:1px solid var(--line);border-radius:8px;padding:12px;display:grid;gap:8px;min-width:0}
 .pc.met{border-color:var(--good);background:color-mix(in srgb,var(--good) 8%,transparent)}
 .pc .top2{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
-.pc .nm{font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pc .nm{min-width:0;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .pc .goal{font-family:var(--f-mono);font-size:12px;color:var(--muted);white-space:nowrap}
 .pc.met .goal{color:var(--good)}
-.pc .ctl{display:grid;grid-template-columns:36px 1fr 36px;gap:6px;align-items:center}
+.pc .ctl{display:grid;grid-template-columns:36px minmax(0,1fr) 36px;gap:6px;align-items:center}
 .pc .ctl button{height:40px;border-radius:8px;border:1px solid var(--line);background:var(--surface);font-size:20px;line-height:1}
 .pc .ctl button.plus{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
 .pc .ctl input{text-align:center;font-family:var(--f-mono);font-size:20px;padding:6px 4px;height:40px}
@@ -236,7 +280,9 @@ textarea{resize:vertical;min-height:84px;line-height:1.5}
     <p id="authsub">Sign in to sync your habits, check-ins, time log and job hunt across your laptop and phone.</p>
     <form id="authform" class="panel" style="display:grid;gap:12px">
       <div class="field"><label class="label" for="aemail">Email</label><input type="text" inputmode="email" autocomplete="email" id="aemail" required></div>
+      <div class="field" id="anamewrap" hidden><label class="label" for="aname">Your name</label><input type="text" id="aname" maxlength="40" autocomplete="name" placeholder="Shown to other members"></div>
       <div class="field"><label class="label" for="apass">Password</label><input type="password" autocomplete="current-password" id="apass" minlength="6" required></div>
+      <p class="notice" id="anotice" hidden>Daybook has a community. Your name, practice streak, solved daily questions and job applications (company, role, platform and link) are visible to other members.</p>
       <button class="btn" id="asubmit">Sign in</button>
       <div class="err" id="aerr" role="alert"></div>
       <button type="button" class="linkbtn" id="amode">New here? Create an account</button>
@@ -259,10 +305,13 @@ textarea{resize:vertical;min-height:84px;line-height:1.5}
       </div>
       <nav class="tabs" id="tabs">
         <a href="#today" data-tab="today">Today</a>
+        <a href="#questions" data-tab="questions">Daily Qs</a>
+        <a href="#community" data-tab="community">Community</a>
         <a href="#time" data-tab="time">Time log</a>
         <a href="#jobs" data-tab="jobs">Job hunt</a>
         <a href="#insights" data-tab="insights">Insights</a>
         <a href="#account" data-tab="account">Account</a>
+        <a href="#admin" data-tab="admin" id="admintab" hidden>Admin</a>
       </nav>
     </header>
     <main id="view"></main>
@@ -308,9 +357,22 @@ const SCALES = {
 const DEFAULT_SUBJECTS = [
   {id:"q-excel",name:"Excel",goal:5},{id:"q-sql",name:"SQL",goal:5},{id:"q-python",name:"Python",goal:5},
   {id:"q-powerbi",name:"Power BI",goal:3},{id:"q-biz",name:"Business case",goal:2}];
-const DEFAULT_HABITS = [
-  {id:"h-workout",name:"Workout"},{id:"h-read",name:"Read 20 min"},{id:"h-sql",name:"Practice SQL / Python"},
-  {id:"h-apply",name:"Apply to 2 jobs"},{id:"h-water",name:"Drink 3L water"},{id:"h-screen",name:"No phone after 11 pm"}];
+const TOPICS = {
+  "excel":["Formulas","Lookups (XLOOKUP / VLOOKUP)","IF / logical","SUMIFS / COUNTIFS","Text & date functions","Pivot tables","Charts","Conditional formatting","Data cleaning","Power Query"],
+  "sql":["Filtering & sorting","Aggregations / GROUP BY","Joins","Subqueries","CTEs","Window functions","CASE WHEN","Date functions"],
+  "python":["Python basics","Pandas","NumPy","Data cleaning","GroupBy / merge","Visualization","Functions & loops"],
+  "power bi":["DAX measures","CALCULATE / filter context","Time intelligence","Data modeling","Power Query","Visuals"],
+  "business case":["KPIs & metrics","Root cause analysis","Guesstimates","A/B testing","Funnel / cohort","Product sense"]};
+const LEVELS = [["easy","Easy"],["medium","Medium"],["hard","Hard"]];
+const topicsFor = name => TOPICS[String(name||"").toLowerCase()] || [];
+let lastDetailSubj = null;
+const DEFAULT_HABITS = [];
+const HABIT_IDEAS = [
+  ["Job hunt","Apply to 2 jobs"],["Job hunt","Follow up on 1 application"],["Job hunt","Message 2 people on LinkedIn"],
+  ["Learning","Solve today's Daily Qs"],["Learning","Learn one new concept (30 min)"],["Learning","Portfolio project (1 hour)"],
+  ["Learning","Revise yesterday's notes"],["Learning","Explain one answer out loud"],
+  ["Health","Walk or exercise 30 min"],["Health","Sleep before 12 am"],["Health","Phone-free first hour"]];
+let editHabits=false;
 
 /* ---------- Supabase ---------- */
 const CFG = window.DAYBOOK_CONFIG || {};
@@ -350,7 +412,7 @@ const Store = {
     this.pushing=false;
     if(error){ setSync("off"); toast("Couldn't sync. Your changes are kept on this device and will sync later."); return; }
     keys.forEach(k=>{ if(JSON.stringify(this.cache[k]??{})===snap[k]) delete this.dirty[k]; });
-    this.saveLocal();
+    this.saveLocal(); scheduleMemberSync();
     if(this.again || Object.keys(this.dirty).length){ this.again=false; return this.push(); }
     setSync("ok");
   }
@@ -386,7 +448,8 @@ function renderChrome(){
   $("#datelabel").innerHTML = `<small>${rel}</small>${d.getDate()} ${MON[d.getMonth()]} ${d.getFullYear()}`;
   $("#next").disabled = sel>=t; $("#next").style.opacity = sel>=t? .4:1;
   $("#gotoday").hidden = sel===t;
-  $(".datenav").style.visibility = (tab==="today"||tab==="time")? "visible":"hidden";
+  $(".datenav").style.visibility = (tab==="today"||tab==="time"||tab==="questions")? "visible":"hidden";
+  $("#admintab").hidden = !Net.isAdmin;
   document.querySelectorAll("#tabs a").forEach(a=>a.setAttribute("aria-current", a.dataset.tab===tab? "page":"false"));
   setSync(Store.state);
 }
@@ -423,6 +486,17 @@ function viewPractice(d){
           <button class="plus" data-pplus="${x.id}" aria-label="One more ${esc(x.name)} question">+</button></div>
         ${g?`<div class="bar"><b style="width:${Math.min(100,v/g*100)}%"></b></div>`:""}
       </div>`;}).join("")}</div>
+    <h3 class="label" style="margin:18px 0 8px">Log what you solved</h3>
+    <form id="adddetail" class="row">
+      <div class="field" style="flex:1 1 130px"><label class="label" for="dsubj">Subject</label><select id="dsubj">${sj.map(x=>`<option value="${x.id}" ${x.id===(lastDetailSubj||sj[0]&&sj[0].id)?"selected":""}>${esc(x.name)}</option>`).join("")}</select></div>
+      <div class="field" style="flex:2 1 180px"><label class="label" for="dtopic">Topic / question type</label><input type="text" id="dtopic" list="topiclist" maxlength="50" placeholder="e.g. Joins, Pivot tables" autocomplete="off">
+        <datalist id="topiclist">${topicsFor((sj.find(x=>x.id===(lastDetailSubj||sj[0]&&sj[0].id))||{}).name).map(t=>`<option value="${esc(t)}"></option>`).join("")}</datalist></div>
+      <div class="field" style="flex:1 1 110px"><label class="label" for="dlevel">Level</label><select id="dlevel">${LEVELS.map(([v,l])=>`<option value="${v}">${l}</option>`).join("")}</select></div>
+      <div class="field" style="width:76px"><label class="label" for="dcount">Count</label><input type="number" id="dcount" min="1" max="99" value="1"></div>
+      <button class="btn">Log</button>
+    </form>
+    ${(d.pdetail||[]).length? `<div class="dlist">${d.pdetail.map(e=>{ const sx=sj.find(x=>x.id===e.sid); return `<span class="chipx">${esc(sx?sx.name:"Removed subject")} · ${esc(e.topic||"General")} · <span class="lvl lvl-${e.level}">${esc(e.level)}</span> ×${e.n}${e.src==="daily"?" · daily Q":""}<button data-deldetail="${e.id}" aria-label="Remove entry">×</button></span>`; }).join("")}</div>`
+      : `<p class="hint" style="margin:8px 0 0">Each entry also adds to that subject's count above. Solving a Daily Q logs itself here.</p>`}
     <details style="margin-top:12px" id="subjdetails"><summary class="hint" style="cursor:pointer">Edit subjects and daily goals</summary>
       <div style="display:grid;gap:8px;margin-top:10px">${sj.map(x=>`<div class="row" style="align-items:center">
         <span style="flex:1;min-width:0">${esc(x.name)}</span>
@@ -432,6 +506,18 @@ function viewPractice(d){
         <div class="field" style="width:80px"><input type="number" id="newsubjgoal" min="0" max="999" value="3" aria-label="Daily goal"></div><button class="btn small">Add subject</button></form>
     </details>
   </section>`;
+}
+function viewHabitEditor(hs){
+  const have=new Set(hs.map(h=>h.name.toLowerCase()));
+  const ideas=HABIT_IDEAS.filter(([,n])=>!have.has(n.toLowerCase()));
+  const cats=[...new Set(ideas.map(([c])=>c))];
+  return `<p class="sub">${hs.length?"Rename, remove or add habits. Your habits are private to you.":"Pick the habits you want to build. Tap a suggestion or write your own. Only you can see them."}</p>
+    ${hs.length? `<div style="display:grid;gap:8px;margin-bottom:12px">${hs.map(h=>`<div class="row" style="align-items:center;flex-wrap:nowrap">
+      <input type="text" id="hn-${h.id}" data-renhabit="${h.id}" value="${esc(h.name)}" maxlength="40" aria-label="Habit name" style="flex:1">
+      <button class="del" data-delhabit="${h.id}" aria-label="Remove ${esc(h.name)}">×</button></div>`).join("")}</div>`:""}
+    <form class="row" id="addhabit"><div class="field grow"><input type="text" id="newhabit" placeholder="Your own habit, e.g. Read 10 pages" maxlength="40" aria-label="New habit"></div><button class="btn small">Add habit</button></form>
+    ${ideas.length? cats.map(c=>`<div class="label" style="margin:14px 0 6px">${c} ideas</div><div class="qfilters" style="margin:0">${ideas.filter(([x])=>x===c).map(([,n])=>`<button class="chip" data-habitidea="${esc(n)}">+ ${esc(n)}</button>`).join("")}</div>`).join("") : ""}
+    ${hs.length? `<p class="hint" style="margin:14px 0 0">Removing a habit keeps its past ticks. Renaming keeps its streak.</p>`:""}`;
 }
 function viewToday(){
   const d=getDay(sel), hs=habits();
@@ -443,15 +529,12 @@ function viewToday(){
   ${viewTasks(d)}
   <div class="grid2">
     <section class="panel">
-      <h2>Habits</h2>
-      <p class="sub"><span class="num">${n}/${hs.length}</span> done · ${pct}%</p>
+      <div class="row" style="justify-content:space-between;align-items:center"><h2>Habits</h2>${hs.length?`<button class="btn ghost small" id="edithabits">${editHabits?"Done":"Edit habits"}</button>`:""}</div>
+      ${(editHabits||!hs.length)? viewHabitEditor(hs) : `
+      <p class="sub"><span class="num">${n}/${hs.length}</span> done · ${pct}% · a streak counts the days in a row you ticked it</p>
       <div class="progress"><b style="width:${pct}%"></b></div>
       <div class="habits">${hs.map(h=>{ const on=d.habits&&d.habits[h.id]; const s=streak(h.id);
-        return `<button class="habit ${on?"on":""}" data-habit="${h.id}" aria-pressed="${!!on}"><span class="box">${on?"✓":""}</span><span class="nm">${esc(h.name)}</span><span class="streak ${s>=3?"hot":""}" title="Current streak">${s}d streak</span></button>`;}).join("") || `<div class="empty">No habits yet. Add one below.</div>`}</div>
-      <details style="margin-top:12px"><summary class="hint" style="cursor:pointer">Edit habits</summary>
-        <div class="manage">${hs.map(h=>`<span class="chipx">${esc(h.name)}<button data-delhabit="${h.id}" aria-label="Remove ${esc(h.name)}">×</button></span>`).join("")}</div>
-        <form class="row" id="addhabit" style="margin-top:10px"><div class="field grow"><input type="text" id="newhabit" placeholder="e.g. Meditate 10 min" maxlength="40" aria-label="New habit"></div><button class="btn small">Add habit</button></form>
-      </details>
+        return `<button class="habit ${on?"on":""}" data-habit="${h.id}" aria-pressed="${!!on}"><span class="box">${on?"✓":""}</span><span class="nm">${esc(h.name)}</span><span class="streak ${s>=3?"hot":""}" title="Current streak">${s}d streak</span></button>`;}).join("") || ""}</div>`}
     </section>
     <section class="panel">
       <h2>Check-in</h2>
@@ -521,6 +604,7 @@ function viewJobs(){
   </section>
   <section class="panel">
     <h2>Add an application</h2>
+    <p class="sub">Applications you add are visible to all members in Community.</p>
     <form id="addjob" style="display:grid;gap:10px;margin-top:10px">
       <div class="row">
         <div class="field grow"><label class="label" for="jco">Company</label><input type="text" id="jco" maxlength="60" required placeholder="Company name"></div>
@@ -640,6 +724,12 @@ function viewInsights(){
       <section class="panel"><h2>Practice by subject</h2><p class="sub">Total questions, last 30 days.</p>
         <div class="hbars">${sj.map((x,i)=>`<div class="hbar"><span>${esc(x.name)}</span><span class="t"><b style="width:${ps30[x.id]/mxs*100}%;background:var(--c${(i%8)+1})"></b></span><span class="v">${ps30[x.id]}</span></div>`).join("")}</div></section>
     </div>`; })()}
+  ${(()=>{ const sjm={}; subjects().forEach(x=>sjm[x.id]=x.name); const byT={}, byL={easy:0,medium:0,hard:0};
+    days.forEach(x=>((x.d&&x.d.pdetail)||[]).forEach(e=>{ const k=(sjm[e.sid]||"Other")+" · "+(e.topic||"General"); byT[k]=(byT[k]||0)+e.n; if(e.level in byL) byL[e.level]+=e.n; }));
+    const ks=Object.keys(byT).sort((a,b)=>byT[b]-byT[a]).slice(0,8), mx=Math.max(1,...ks.map(k=>byT[k]));
+    return `<section class="panel"><h2>Practice by topic</h2><p class="sub">Last 30 days, from your detailed log. Easy <span class="num">${byL.easy}</span> · Medium <span class="num">${byL.medium}</span> · Hard <span class="num">${byL.hard}</span></p>
+      ${ks.length? `<div class="hbars">${ks.map((k,i)=>`<div class="hbar" style="grid-template-columns:minmax(0,180px) 1fr 40px"><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${esc(k)}">${esc(k)}</span><span class="t"><b style="width:${byT[k]/mx*100}%;background:var(--c${(i%8)+1})"></b></span><span class="v">${byT[k]}</span></div>`).join("")}</div>`
+        : `<div class="empty">Use "Log what you solved" on the Today tab to see topics here.</div>`}</section>`; })()}
   <section class="panel"><h2>Habit calendar</h2><p class="sub">Last 4 weeks. Today is outlined.</p><div class="tablewrap">${hs.length?heat:`<div class="empty">Add habits on the Today tab.</div>`}</div></section>
   <div class="grid2">
     <section class="panel"><h2>Mood & productivity</h2>
@@ -655,6 +745,10 @@ function viewInsights(){
 function viewAccount(){
   const all=Store.all(); const nd=Object.keys(all).filter(k=>k.startsWith("d-")).length;
   return `
+  <section class="panel acct"><h2>Community name</h2>
+    <p class="sub">Shown next to your streak, answers and applications in Community.</p>
+    <form class="row" id="rename"><div class="field grow"><input type="text" id="renameinput" maxlength="40" value="${esc((Net.me&&Net.me.display_name)||"")}" aria-label="Community name" required></div><button class="btn ghost">Save name</button></form>
+  </section>
   <section class="panel acct"><h2>Account</h2>
     <p class="sub">Signed in as <b>${esc(Store.user.email||"")}</b>. <span class="num">${nd}</span> days logged, <span class="num">${jobs().length}</span> applications.</p>
     <div class="row"><button class="btn ghost" id="syncnow">Sync now</button><button class="btn ghost" id="signout">Sign out</button></div>
@@ -686,9 +780,9 @@ function parseCSV(text){
 function daysCSV(){
   const hs=habits(), all=Store.all();
   const keys=Object.keys(all).filter(k=>k.startsWith("d-")).map(k=>k.slice(2)).sort();
-  const head=["date","weekday","mood","energy","productivity","sleep_hours","habits_done","habits_total",...hs.map(h=>"habit_"+h.name),...CATS.map(c=>"min_"+c.id),...subjects().map(x=>"q_"+x.name),"tasks_done","tasks_total","tasks","journal"];
+  const head=["date","weekday","mood","energy","productivity","sleep_hours","habits_done","habits_total",...hs.map(h=>"habit_"+h.name),...CATS.map(c=>"min_"+c.id),...subjects().map(x=>"q_"+x.name),"tasks_done","tasks_total","tasks","practice_details","journal"];
   const rows=keys.map(k=>{ const d=all["d-"+k]; const by={}; (d.time||[]).forEach(e=>by[e.cat]=(by[e.cat]||0)+dur(e));
-    return [k,DOW[parseKey(k).getDay()],d.mood,d.energy,d.prod,d.sleep,hs.filter(h=>d.habits&&d.habits[h.id]).length,hs.length,...hs.map(h=>d.habits&&d.habits[h.id]?1:0),...CATS.map(c=>by[c.id]||0),...subjects().map(x=>(d.practice&&+d.practice[x.id])||0),(d.tasks||[]).filter(t=>t.done).length,(d.tasks||[]).length,(d.tasks||[]).map(t=>(t.done?"[x] ":"[ ] ")+t.text).join(" | "),d.note]; });
+    return [k,DOW[parseKey(k).getDay()],d.mood,d.energy,d.prod,d.sleep,hs.filter(h=>d.habits&&d.habits[h.id]).length,hs.length,...hs.map(h=>d.habits&&d.habits[h.id]?1:0),...CATS.map(c=>by[c.id]||0),...subjects().map(x=>(d.practice&&+d.practice[x.id])||0),(d.tasks||[]).filter(t=>t.done).length,(d.tasks||[]).length,(d.tasks||[]).map(t=>(t.done?"[x] ":"[ ] ")+t.text).join(" | "),(d.pdetail||[]).map(e=>{ const sx=subjects().find(x=>x.id===e.sid); return (sx?sx.name:"?")+"/"+(e.topic||"General")+"/"+e.level+" x"+e.n; }).join(" | "),d.note]; });
   return [head,...rows].map(r=>r.map(csvCell).join(",")).join("\n");
 }
 function jobsCSV(){
@@ -741,27 +835,335 @@ function importCSV(text){
   return "This doesn't look like a Daybook CSV. Use a file from the Export buttons.";
 }
 
+/* ---------- community, daily questions, admin ---------- */
+const QFN = (window.DAYBOOK_CONFIG||{}).QUESTIONS_FUNCTION || "rapid-api";  // name of the Supabase Edge Function
+const Net = { uid:null, me:null, meLoaded:false, isAdmin:false,
+  members:[], membersAt:0, membersLoading:false,
+  q:{ key:null, loading:false, status:null, error:null, day:null, list:[], mine:{}, solvers:[], polls:0 },
+  open:{}, detail:{}, drafts:{}, editing:{}, filter:"All",
+  admin:{ rows:null, loading:false, at:0, err:null }, lbSort:"streak", feedQ:"", feedPlat:"", feedN:40, syncT:null };
+function netReset(){ Object.assign(Net,{ uid:null, me:null, meLoaded:false, isAdmin:false, members:[], membersAt:0, open:{}, detail:{}, drafts:{}, editing:{} });
+  Net.q={ key:null, loading:false, status:null, error:null, day:null, list:[], mine:{}, solvers:[], polls:0 }; Net.admin={ rows:null, loading:false, at:0, err:null }; }
+
+const md = src => String(src||"").split("```").map((p,i)=>{
+  if(i%2===1){ const nl=p.indexOf("\n"); const body=(nl>=0 && /^[\w+#.-]*$/.test(p.slice(0,nl).trim()))? p.slice(nl+1) : p;
+    return `<pre class="code"><code>${esc(body.replace(/\n$/,""))}</code></pre>`; }
+  const out=[]; let tbl=[];
+  const flush=()=>{ if(!tbl.length) return; const rows=tbl.filter(l=>!/^\s*\|?\s*:?-{2,}/.test(l)).map(l=>l.trim().replace(/^\||\|$/g,"").split("|").map(c=>inl(c.trim())));
+    if(rows.length) out.push(`<div class="tablewrap"><table class="mdt"><thead><tr>${rows[0].map(c=>`<th>${c}</th>`).join("")}</tr></thead><tbody>${rows.slice(1).map(r=>`<tr>${r.map(c=>`<td>${c}</td>`).join("")}</tr>`).join("")}</tbody></table></div>`);
+    tbl=[]; };
+  p.split("\n").forEach(l=>{ if(/^\s*\|.*\|\s*$/.test(l)) tbl.push(l); else { flush(); out.push(inl(l)+"<br>"); } });
+  flush(); return out.join("").replace(/^(<br>)+|(<br>)+$/g,"");
+}).join("");
+function inl(s){ return esc(s).replace(/`([^`]+)`/g,"<code>$1</code>").replace(/\*\*([^*]+)\*\*/g,"<b>$1</b>"); }
+const ago = iso => { const m=Math.round((Date.now()-new Date(iso).getTime())/60000); return m<1?"just now": m<60? m+"m ago" : m<1440? Math.round(m/60)+"h ago" : Math.round(m/1440)+"d ago"; };
+
+/* practice streak: days in a row with at least one question solved */
+function practiceStreaks(){
+  const t=todayKey(); let k=pracTotal(Store.get("d-"+t))>0? t : addDays(t,-1), cur=0;
+  while(pracTotal(Store.get("d-"+k))>0 && cur<3650){ cur++; k=addDays(k,-1); }
+  const keys=Object.keys(Store.all()).filter(x=>x.startsWith("d-")&&pracTotal(Store.get(x))>0).map(x=>x.slice(2)).sort();
+  let best=0, run=0, prev=null;
+  keys.forEach(x=>{ run = (prev && addDays(prev,1)===x)? run+1 : 1; best=Math.max(best,run); prev=x; });
+  return { cur, best:Math.max(best,cur) };
+}
+
+async function netInit(user){
+  Net.uid=user.id;
+  try{ const {data}=await sb.rpc("is_admin"); Net.isAdmin=data===true; }catch(e){ Net.isAdmin=false; }
+  await loadMe();
+  if(!Net.me){ const nm=((user.user_metadata||{}).display_name||"").trim(); if(nm) await saveName(nm,true); }
+  render(); scheduleMemberSync(500);
+}
+async function loadMe(){
+  try{ const {data,error}=await sb.from("members").select("*").eq("user_id",Net.uid).maybeSingle(); if(!error){ Net.me=data||null; Net.meLoaded=true; } }
+  catch(e){}
+}
+async function saveName(name,quiet){
+  name=String(name||"").trim().slice(0,40); if(!name) return false;
+  const {data,error}=await sb.from("members").upsert({user_id:Net.uid,display_name:name,updated_at:new Date().toISOString()},{onConflict:"user_id"}).select().maybeSingle();
+  if(error){ if(!quiet) toast("Couldn't save your name: "+error.message); return false; }
+  Net.me=data; Net.meLoaded=true; Net.membersAt=0; scheduleMemberSync(300); return true;
+}
+function scheduleMemberSync(ms){ clearTimeout(Net.syncT); Net.syncT=setTimeout(syncMember, ms==null?2500:ms); }
+async function syncMember(){
+  if(!Net.uid || !Net.me || !navigator.onLine) return;
+  const t=todayKey(), st=practiceStreaks();
+  let p7=0, t7=0; for(let i=0;i<7;i++){ const d=Store.get("d-"+addDays(t,-i)); p7+=pracTotal(d); t7+=((d&&d.tasks)||[]).filter(x=>x.done).length; }
+  let solved=Net.me.solved_total||0;
+  try{ const {count}=await sb.from("submissions").select("id",{count:"exact",head:true}).eq("user_id",Net.uid); if(typeof count==="number") solved=count; }catch(e){}
+  const apps=jobs().slice().sort((a,b)=>(b.date||"").localeCompare(a.date||"")).slice(0,300)
+    .map(j=>({company:j.company,role:j.role||"",platform:j.platform||"",link:safeUrl(j.link),status:j.status,date:j.date}));
+  const row={user_id:Net.uid,display_name:Net.me.display_name,streak:st.cur,best_streak:st.best,solved_total:solved,practice_7d:p7,tasks_7d:t7,applications:apps,last_active:t,updated_at:new Date().toISOString()};
+  const {data,error}=await sb.from("members").upsert(row,{onConflict:"user_id"}).select().maybeSingle();
+  if(!error && data){ Net.me=data; const i=Net.members.findIndex(m=>m.user_id===data.user_id); if(i>=0) Net.members[i]=data; else Net.members.push(data); if(tab==="community") render(); }
+}
+
+/* load what the current tab needs; guarded so render() can call it freely */
+function ensureData(){
+  if(!Net.uid) return;
+  if(tab==="questions"){ const key=sel; if(Net.q.key!==key && !Net.q.loading) loadQuestions(key); }
+  if(tab==="community"){ if(!Net.membersLoading && Date.now()-Net.membersAt>60000) loadMembers();
+    const t=todayKey(); if(Net.q.key!==t && !Net.q.loading) loadQuestions(t,true); }
+  if(tab==="admin" && Net.isAdmin && !Net.admin.loading && Date.now()-Net.admin.at>60000) loadAdmin();
+}
+async function loadMembers(){
+  Net.membersLoading=true;
+  const {data,error}=await sb.from("members").select("*").order("streak",{ascending:false}).limit(500);
+  Net.membersLoading=false; Net.membersAt=Date.now();
+  if(!error) Net.members=data||[];
+  if(tab==="community") render();
+}
+async function loadQuestions(day,silent){
+  const Q=Net.q; Q.loading=true; Q.key=day; if(!silent && tab==="questions") render();
+  try{
+    if(day===todayKey()){
+      const {data:set}=await sb.from("daily_sets").select("*").eq("day",day).maybeSingle();
+      if(!set || (set.status==="generating" && Date.now()-new Date(set.started_at).getTime()>4*60e3)){
+        Q.status="generating"; Q.loading=false; if(tab==="questions") render();
+        const {data,error}=await sb.functions.invoke(QFN,{body:{}});
+        if(error && !data){ Q.status="nofunction"; Q.error=error.message||String(error); Q.loading=false; if(tab==="questions") render(); return; }
+      }
+    }
+    const {data:set2}=await sb.from("daily_sets").select("*").eq("day",day).maybeSingle();
+    Q.status=set2? set2.status : "none"; Q.error=set2&&set2.error; Q.day=day;
+    const {data:qs}=await sb.from("questions").select("*").eq("day",day).order("position");
+    Q.list=qs||[];
+    Q.mine={};
+    if(Q.list.length){
+      const {data:mine}=await sb.from("submissions").select("question_id,answer,created_at,updated_at").eq("user_id",Net.uid).in("question_id",Q.list.map(q=>q.id));
+      (mine||[]).forEach(m=>Q.mine[m.question_id]=m);
+      const {data:sv}=await sb.rpc("daily_solvers",{p_day:day}); Q.solvers=sv||[];
+    } else Q.solvers=[];
+    if(Q.status==="generating" && day===todayKey() && Q.polls<40){ Q.polls++; setTimeout(()=>{ if(Q.key===day){ Q.key=null; } if(tab==="questions"||tab==="community") ensureData(); },6000); }
+  }catch(e){ Q.status="error"; Q.error=e.message||String(e); }
+  Q.loading=false;
+  if(tab==="questions"||tab==="community") render();
+}
+async function retryGeneration(){
+  Net.q.status="generating"; Net.q.polls=0; render();
+  const {data,error}=await sb.functions.invoke(QFN,{body:{}});
+  if(error && !data){ Net.q.status="nofunction"; Net.q.error=error.message||String(error); }
+  Net.q.key=null; Net.admin.at=0; render();
+}
+async function loadDetail(id){
+  const D=Net.detail[id]={loading:true}; render();
+  const [{data:sol},{data:ans}]=await Promise.all([
+    sb.from("solutions").select("solution").eq("question_id",id).maybeSingle(),
+    sb.from("submissions").select("user_id,answer,created_at,updated_at").eq("question_id",id).order("created_at")]);
+  D.loading=false; D.solution=sol&&sol.solution; D.answers=ans||[]; render();
+}
+async function submitAnswer(id){
+  const q=Net.q.list.find(x=>x.id===id); const ta=$("#ans-"+id); const answer=(ta?ta.value:"").trim();
+  if(!q||!answer){ toast("Write your answer first."); return; }
+  if(!Net.me){ toast("Choose your community name first (top of the page)."); return; }
+  const first=!Net.q.mine[id];
+  const btn=$("#sub-"+id); if(btn) btn.disabled=true;
+  const now=new Date().toISOString();
+  const {error}=await sb.from("submissions").upsert({question_id:id,user_id:Net.uid,answer,updated_at:now},{onConflict:"question_id,user_id"});
+  if(btn) btn.disabled=false;
+  if(error){ toast("Couldn't submit: "+error.message); return; }
+  Net.q.mine[id]={question_id:id,answer,created_at:(Net.q.mine[id]||{}).created_at||now,updated_at:now};
+  delete Net.drafts[id]; Net.editing[id]=false;
+  if(first){
+    if(!Net.q.solvers.some(s=>s.question_id===id&&s.user_id===Net.uid)) Net.q.solvers.push({question_id:id,user_id:Net.uid,display_name:Net.me.display_name,solved_at:now});
+    let list=clone(subjects()); let sx=list.find(x=>x.name.toLowerCase()===q.subject.toLowerCase());
+    if(!sx){ sx={id:"q-"+uid(),name:q.subject,goal:0}; list.push(sx); saveSubjects(list); }
+    setDay(todayKey(),d=>{ d.pdetail=d.pdetail||[]; d.pdetail.push({id:uid(),sid:sx.id,topic:q.topic||"Daily question",level:q.level,n:1,src:"daily"}); d.practice=d.practice||{}; d.practice[sx.id]=(+d.practice[sx.id]||0)+1; });
+    toast("Submitted. Answers unlocked.");
+  } else toast("Answer updated");
+  loadDetail(id); scheduleMemberSync(800);
+}
+async function loadAdmin(){
+  const A=Net.admin; A.loading=true;
+  const {data,error}=await sb.rpc("admin_members");
+  A.loading=false; A.at=Date.now(); A.rows=data||[]; A.err=error&&error.message;
+  const t=todayKey(); if(Net.q.key!==t && !Net.q.loading) loadQuestions(t,true);
+  if(tab==="admin") render();
+}
+
+/* ---------- views ---------- */
+function viewNamePanel(){
+  if(!Net.meLoaded || Net.me) return "";
+  return `<section class="panel"><h2>Choose your community name</h2>
+    <p class="sub">Other members see this name with your streak, solved daily questions and job applications.</p>
+    <form class="row" id="setname"><div class="field grow"><input type="text" id="setnameinput" maxlength="40" placeholder="e.g. Nikhil M" aria-label="Community name" required></div><button class="btn">Save</button></form>
+  </section>`;
+}
+function viewQuestions(){
+  const Q=Net.q, t=todayKey();
+  const head=(sub)=>`<section class="panel"><h2>Daily questions</h2><p class="sub">${sub}</p>`;
+  if(Q.key!==sel || (Q.loading && !Q.list.length && Q.status!=="generating")) return head("Same questions for everyone, new set every day.")+`<div class="empty"><span class="spin"></span>Loading questions…</div></section>`;
+  if(Q.status==="generating" && !Q.list.length) return head("Same questions for everyone, new set every day.")+`<div class="empty"><span class="spin"></span>AI is writing today's questions. This takes about a minute. You can leave this page; they'll be here when you're back.</div></section>`;
+  if(Q.status==="nofunction") return head("Same questions for everyone, new set every day.")+`<div class="empty">Daily questions aren't switched on yet.${Net.isAdmin?`<br><span class="hint">Admin: deploy the <b>${esc(QFN)}</b> function and add the GEMINI_API_KEY secret (README, part 2). Error: ${esc(Q.error||"")}</span>`:""}</div></section>`;
+  if(!Q.list.length){
+    const failed = Q.status==="failed"||Q.status==="error";
+    return head(sel===t? "Same questions for everyone, new set every day." : "Questions from this day.")+(failed?
+      `<div class="empty">Today's questions couldn't be created.${Net.isAdmin&&Q.error?`<br><span class="hint">${esc(Q.error)}</span>`:""}<br><button class="btn small" id="retrygen" style="margin-top:10px">Try again</button></div>`
+      : `<div class="empty">No daily questions for this day.</div>`)+`</section>`;
+  }
+  const subjectsHere=[...new Set(Q.list.map(q=>q.subject))];
+  if(Net.filter!=="All" && !subjectsHere.includes(Net.filter)) Net.filter="All";
+  const solvedN=Q.list.filter(q=>Q.mine[q.id]).length;
+  const cnt={}; Q.solvers.forEach(s=>cnt[s.question_id]=(cnt[s.question_id]||0)+1);
+  const names={}; Q.solvers.forEach(s=>{ (names[s.question_id]=names[s.question_id]||[]).push(s); });
+  const shown=Q.list.filter(q=>Net.filter==="All"||q.subject===Net.filter);
+  let html=head(`${sel===t?"Today's set":"This day's set"}: same questions for everyone. You solved <span class="num">${solvedN}/${Q.list.length}</span>.`)+
+    `<div class="progress"><b style="width:${Q.list.length?solvedN/Q.list.length*100:0}%;background:var(--good)"></b></div>
+    <div class="qfilters">${["All",...subjectsHere].map(s=>`<button class="chip ${Net.filter===s?"on":""}" data-qfilter="${esc(s)}">${esc(s)}${s!=="All"?` <span class="num">${Q.list.filter(q=>q.subject===s&&Q.mine[q.id]).length}/${Q.list.filter(q=>q.subject===s).length}</span>`:""}</button>`).join("")}</div>
+    ${Q.status==="partial"?`<p class="hint" style="margin-top:10px">Some subjects are missing today. <button class="linkbtn" id="retrygen">Try to add them</button></p>`:""}
+    </section>`;
+  const groups=Net.filter==="All"? subjectsHere : [Net.filter];
+  groups.forEach(sub=>{
+    const qs=shown.filter(q=>q.subject===sub); if(!qs.length) return;
+    html+=`<section class="panel"><h2>${esc(sub)}</h2><div class="qlist" style="margin-top:10px">${qs.map(q=>{
+      const mine=Q.mine[q.id], open=!!Net.open[q.id], D=Net.detail[q.id], n=cnt[q.id]||0;
+      let body="";
+      if(open){
+        body=`<div class="qbody"><div class="md">${md(q.prompt)}</div>`;
+        if(!mine || Net.editing[q.id]){
+          body+=`<div class="field"><label class="label" for="ans-${q.id}">${mine?"Edit your answer":"Your answer"}</label><textarea id="ans-${q.id}" data-draft="${q.id}" style="font-family:var(--f-mono);font-size:13px;min-height:120px" placeholder="Write your formula, query, code or approach">${esc(Net.drafts[q.id]!=null?Net.drafts[q.id]:(mine?mine.answer:""))}</textarea></div>
+            <div class="row"><button class="btn" id="sub-${q.id}" data-submit="${q.id}">${mine?"Save answer":"Submit answer"}</button>${mine?`<button class="btn ghost" data-canceledit="${q.id}">Cancel</button>`:`<span class="hint">The model answer and others' answers unlock after you submit.</span>`}</div>`;
+        }
+        if(mine){
+          if(!Net.editing[q.id]) body+=`<div class="box"><h3>Your answer</h3><pre style="white-space:pre-wrap;overflow-wrap:anywhere;font-family:var(--f-mono);font-size:13px;margin:0">${esc(mine.answer)}</pre><button class="linkbtn" data-edit="${q.id}" style="margin-top:8px">Edit answer</button></div>`;
+          if(!D || D.loading) body+=`<div class="hint"><span class="spin"></span>Loading answers…</div>`;
+          else{
+            if(D.solution) body+=`<div class="box model"><h3>Model answer (AI)</h3><div class="md">${md(D.solution)}</div></div>`;
+            const others=(D.answers||[]).filter(a=>a.user_id!==Net.uid);
+            const nm=id=>{ const s=Q.solvers.find(x=>x.user_id===id); return s? s.display_name : "Member"; };
+            body+=`<div class="box"><h3>Others' answers (${others.length})</h3>${others.length? others.map(a=>`<div class="ans"><div class="who">${esc(nm(a.user_id))}<span>${ago(a.created_at)}</span></div><pre>${esc(a.answer)}</pre></div>`).join("") : `<p class="hint" style="margin:0">Nobody else has answered yet.</p>`}</div>`;
+          }
+        }
+        if(n) body+=`<div><div class="label" style="margin-bottom:6px">Solved by</div><div class="solvers">${(names[q.id]||[]).map(s=>`<span>${esc(s.display_name)}${s.user_id===Net.uid?" (you)":""}</span>`).join("")}</div></div>`;
+        body+=`</div>`;
+      }
+      return `<article class="qcard ${mine?"solved":""}"><button class="qhead" data-qopen="${q.id}" aria-expanded="${open}">
+        <span class="lvl lvl-${q.level}">${esc(q.level)}</span>
+        <span class="qt">${esc(q.title)}<span class="qm">${esc(q.topic||"")}</span></span>
+        <span class="qs">${mine?"✓ solved · ":""}${n} solved</span></button>${body}</article>`;
+    }).join("")}</div></section>`;
+  });
+  return html;
+}
+function viewCommunity(){
+  const ms=Net.members, t=todayKey();
+  if(!Net.membersAt && Net.membersLoading) return `<section class="panel"><div class="empty"><span class="spin"></span>Loading community…</div></section>`;
+  const activeToday=ms.filter(m=>m.last_active===t).length;
+  const todaySolves = Net.q.key===t ? Net.q.solvers.length : 0;
+  const key={streak:"streak",solved:"solved_total",week:"practice_7d"}[Net.lbSort]||"streak";
+  const lb=ms.slice().sort((a,b)=>(b[key]||0)-(a[key]||0)||(b.best_streak||0)-(a.best_streak||0)).slice(0,50);
+  // today's top solvers
+  const per={}; if(Net.q.key===t) Net.q.solvers.forEach(s=>{ const o=per[s.user_id]=per[s.user_id]||{name:s.display_name,n:0,uid:s.user_id}; o.n++; });
+  const top=Object.values(per).sort((a,b)=>b.n-a.n).slice(0,10);
+  // application feed
+  let feed=[]; ms.forEach(m=>(Array.isArray(m.applications)?m.applications:[]).forEach(a=>feed.push({...a,who:m.display_name,uid:m.user_id})));
+  const plats=[...new Set(feed.map(a=>a.platform).filter(Boolean))].sort();
+  const fq=Net.feedQ.toLowerCase();
+  feed=feed.filter(a=>(!fq || (a.company||"").toLowerCase().includes(fq) || (a.role||"").toLowerCase().includes(fq)) && (!Net.feedPlat || a.platform===Net.feedPlat))
+    .sort((a,b)=>(b.date||"").localeCompare(a.date||""));
+  const total=feed.length; feed=feed.slice(0,Net.feedN);
+  return `
+  <div class="kpis">
+    <div class="kpi"><b>${ms.length}</b><span>Members</span></div>
+    <div class="kpi"><b>${activeToday}</b><span>Active today</span></div>
+    <div class="kpi"><b>${todaySolves}</b><span>Daily Qs solved today</span></div>
+    <div class="kpi"><b>${Net.me?Net.me.streak:0}d</b><span>Your practice streak</span></div>
+  </div>
+  <section class="panel"><h2>Leaderboard</h2><p class="sub">Practice streak = days in a row with at least one question solved.</p>
+    <div class="qfilters" style="margin:0 0 6px">${[["streak","Streak"],["solved","Daily Qs solved"],["week","Practice this week"]].map(([k,l])=>`<button class="chip ${Net.lbSort===k?"on":""}" data-lbsort="${k}">${l}</button>`).join("")}</div>
+    ${lb.length? `<div class="tablewrap"><table class="jobs lb"><thead><tr><th>#</th><th>Member</th><th class="n">Streak</th><th class="n">Best</th><th class="n">Daily Qs</th><th class="n">7-day practice</th></tr></thead><tbody>
+      ${lb.map((m,i)=>`<tr><td class="rank">${i+1}</td><td><b>${esc(m.display_name)}</b>${m.user_id===Net.uid?`<span class="you">You</span>`:""}</td><td class="n">${m.streak>=3?"🔥 ":""}${m.streak}d</td><td class="n">${m.best_streak}d</td><td class="n">${m.solved_total}</td><td class="n">${m.practice_7d}</td></tr>`).join("")}
+    </tbody></table></div>` : `<div class="empty">No members yet.</div>`}
+  </section>
+  <section class="panel"><h2>Today's daily question solvers</h2><p class="sub">Open <a href="#questions">Daily Qs</a> to see who solved each question.</p>
+    ${top.length? `<div class="hbars">${top.map((o,i)=>`<div class="hbar"><span>${esc(o.name)}${o.uid===Net.uid?" (you)":""}</span><span class="t"><b style="width:${o.n/Math.max(1,top[0].n)*100}%;background:var(--c${(i%8)+1})"></b></span><span class="v">${o.n}</span></div>`).join("")}</div>` : `<div class="empty">Nobody has solved today's questions yet. Be the first.</div>`}
+  </section>
+  <section class="panel"><h2>Where members are applying</h2>
+    <p class="sub"><span class="num">${total}</span> applications shared by members. Everyone's applications are visible here.</p>
+    <div class="feedtools"><input type="text" id="feedq" placeholder="Search company or role" value="${esc(Net.feedQ)}" aria-label="Search applications">
+      <select id="feedplat" aria-label="Filter by platform"><option value="">All platforms</option>${plats.map(p=>`<option ${p===Net.feedPlat?"selected":""}>${esc(p)}</option>`).join("")}</select></div>
+    ${feed.length? `<div class="tablewrap"><table class="jobs"><thead><tr><th>Company</th><th>Member</th><th>Status</th><th>Applied</th><th>Link</th></tr></thead><tbody>
+      ${feed.map(a=>`<tr><td class="co"><b>${esc(a.company)}</b><span>${esc(a.role||"")}</span>${a.platform?`<span class="plat">${esc(a.platform)}</span>`:""}</td>
+        <td>${esc(a.who)}${a.uid===Net.uid?`<span class="you">You</span>`:""}</td><td><span class="pill s-${esc(a.status)}" style="cursor:default">${esc(a.status==="OA"?"Online test":a.status)}</span></td>
+        <td class="age">${esc(a.date||"")}</td><td>${safeUrl(a.link)?`<a class="jlink" href="${esc(safeUrl(a.link))}" target="_blank" rel="noopener noreferrer">Open ↗</a>`:""}</td></tr>`).join("")}
+    </tbody></table></div>${total>feed.length?`<button class="btn ghost small" id="feedmore" style="margin-top:10px">Show more</button>`:""}` : `<div class="empty">No applications match.</div>`}
+  </section>`;
+}
+function viewAdmin(){
+  const A=Net.admin, Q=Net.q, t=todayKey();
+  const rows=A.rows||[];
+  return `<section class="panel"><h2>Today's questions</h2>
+    <p class="sub">Status: <b>${esc(Q.key===t? (Q.status||"–") : "–")}</b>${Q.key===t?` · <span class="num">${Q.list.length}</span> questions · <span class="num">${Q.solvers.length}</span> answers`:""}</p>
+    ${Q.key===t && Q.error?`<p class="notice">${esc(Q.error)}</p>`:""}
+    <div class="row"><button class="btn ghost small" id="retrygen">Generate missing questions</button><a class="btn ghost small" href="#questions" style="text-decoration:none">Open Daily Qs</a></div>
+  </section>
+  <section class="panel"><h2>Members</h2>
+    <p class="sub"><span class="num">${rows.length}</span> accounts. Passwords are never visible to anyone; Supabase stores them scrambled.</p>
+    ${A.err?`<p class="notice">${esc(A.err)}</p>`:""}
+    ${A.loading&&!rows.length?`<div class="empty"><span class="spin"></span>Loading…</div>`:""}
+    ${rows.length? `<div class="tablewrap"><table class="jobs lb"><thead><tr><th>Name</th><th>Email</th><th>Joined</th><th>Last sign-in</th><th class="n">Streak</th><th class="n">Daily Qs</th><th class="n">7-day</th><th class="n">Apps</th></tr></thead><tbody>
+      ${rows.map(r=>`<tr><td><b>${esc(r.display_name||"(no name yet)")}</b></td><td>${esc(r.email)}</td><td class="age">${esc((r.joined||"").slice(0,10))}</td><td class="age">${r.last_sign_in?ago(r.last_sign_in):"never"}</td>
+        <td class="n">${r.streak}d</td><td class="n">${r.solved_total}</td><td class="n">${r.practice_7d}</td><td class="n">${r.applications}</td></tr>`).join("")}
+    </tbody></table></div>
+    <div class="row" style="margin-top:12px"><button class="btn ghost small" id="adminrefresh">Refresh</button><button class="btn ghost small" id="adminexport">Export members CSV</button></div>` : ""}
+  </section>`;
+}
+function bindNet(){
+  const sn=$("#setname"); if(sn) sn.onsubmit=async e=>{ e.preventDefault(); if(await saveName($("#setnameinput").value)){ toast("Name saved"); render(); } };
+  const rn=$("#rename"); if(rn) rn.onsubmit=async e=>{ e.preventDefault(); if(await saveName($("#renameinput").value)){ toast("Name saved"); render(); } };
+  document.querySelectorAll("[data-qfilter]").forEach(b=>b.onclick=()=>{ Net.filter=b.dataset.qfilter; render(); });
+  document.querySelectorAll("[data-qopen]").forEach(b=>b.onclick=()=>{ const id=+b.dataset.qopen; Net.open[id]=!Net.open[id]; if(Net.open[id] && Net.q.mine[id] && !Net.detail[id]) loadDetail(id); else render(); });
+  document.querySelectorAll("[data-draft]").forEach(ta=>ta.oninput=()=>{ Net.drafts[+ta.dataset.draft]=ta.value; });
+  document.querySelectorAll("[data-submit]").forEach(b=>b.onclick=()=>submitAnswer(+b.dataset.submit));
+  document.querySelectorAll("[data-edit]").forEach(b=>b.onclick=()=>{ Net.editing[+b.dataset.edit]=true; render(); });
+  document.querySelectorAll("[data-canceledit]").forEach(b=>b.onclick=()=>{ const id=+b.dataset.canceledit; Net.editing[id]=false; delete Net.drafts[id]; render(); });
+  const rg=$("#retrygen"); if(rg) rg.onclick=retryGeneration;
+  document.querySelectorAll("[data-lbsort]").forEach(b=>b.onclick=()=>{ Net.lbSort=b.dataset.lbsort; render(); });
+  const fq=$("#feedq"); if(fq) fq.oninput=()=>{ Net.feedQ=fq.value; clearTimeout(Net.fqT); Net.fqT=setTimeout(()=>{ render(); const f=$("#feedq"); if(f){ f.focus(); f.setSelectionRange(f.value.length,f.value.length); } },250); };
+  const fp=$("#feedplat"); if(fp) fp.onchange=()=>{ Net.feedPlat=fp.value; render(); };
+  const fm=$("#feedmore"); if(fm) fm.onclick=()=>{ Net.feedN+=40; render(); };
+  const ar=$("#adminrefresh"); if(ar) ar.onclick=()=>{ Net.admin.at=0; loadAdmin(); };
+  const ae=$("#adminexport"); if(ae) ae.onclick=()=>exportFile("daybook-members.csv",[["name","email","joined","last_sign_in","streak","daily_qs_solved","practice_7d","applications"],
+    ...(Net.admin.rows||[]).map(r=>[r.display_name||"",r.email,r.joined,r.last_sign_in||"",r.streak,r.solved_total,r.practice_7d,r.applications])].map(r=>r.map(csvCell).join(",")).join("\n"));
+}
+
 /* ---------- render + events ---------- */
 function render(){
   if(!Store.user) return;
   renderChrome();
   const v=$("#view");
-  v.innerHTML = tab==="time"? viewTime() : tab==="jobs"? viewJobs() : tab==="insights"? viewInsights() : tab==="account"? viewAccount() : viewToday();
-  bind();
+  if(tab==="admin" && !Net.isAdmin) tab="today";
+  v.innerHTML = viewNamePanel() + (tab==="time"? viewTime() : tab==="jobs"? viewJobs() : tab==="insights"? viewInsights() : tab==="account"? viewAccount()
+    : tab==="questions"? viewQuestions() : tab==="community"? viewCommunity() : tab==="admin"? viewAdmin() : viewToday());
+  bind(); bindNet(); ensureData();
 }
 function bind(){
   document.querySelectorAll("[data-habit]").forEach(b=>b.onclick=()=>{ const h=b.dataset.habit; setDay(sel,d=>{ if(d.habits[h]) delete d.habits[h]; else d.habits[h]=true; }); render(); });
   document.querySelectorAll("[data-scale]").forEach(b=>b.onclick=()=>{ const k=b.dataset.scale, val=+b.dataset.v; setDay(sel,d=>{ if(d[k]===val) delete d[k]; else d[k]=val; }); render(); });
   const sl=$("#sleep"); if(sl) sl.onchange=()=>{ const v=parseFloat(sl.value); setDay(sel,d=>{ if(isNaN(v)) delete d.sleep; else d.sleep=Math.max(0,Math.min(16,v)); }); };
   const nt=$("#note"); if(nt) nt.oninput=()=>{ setDay(sel,d=>{ d.note=nt.value; },800); const s=$("#notestate"); if(s) s.textContent="Saved on this device. Syncing…"; };
-  const ah=$("#addhabit"); if(ah) ah.onsubmit=e=>{ e.preventDefault(); const v=$("#newhabit").value.trim(); if(!v) return; const s=clone(Store.get("settings")||{}); s.habits=(s.habits||[]).concat({id:"h-"+uid(),name:v}); Store.save("settings",s); render(); const det=document.querySelector("details"); if(det) det.open=true; };
-  document.querySelectorAll("[data-delhabit]").forEach(b=>b.onclick=()=>{ const s=clone(Store.get("settings")||{}); s.habits=(s.habits||[]).filter(h=>h.id!==b.dataset.delhabit); Store.save("settings",s); render(); const det=document.querySelector("details"); if(det) det.open=true; toast("Habit removed. Past ticks are kept."); });
+  const addHabit=name=>{ name=String(name||"").trim().slice(0,40); if(!name) return; const st=clone(Store.get("settings")||{}); st.habits=st.habits||[];
+    if(st.habits.some(h=>h.name.toLowerCase()===name.toLowerCase())){ toast("You already have that habit."); return; }
+    st.habits.push({id:"h-"+uid(),name}); Store.save("settings",st); editHabits=true; render(); };
+  const ah=$("#addhabit"); if(ah) ah.onsubmit=e=>{ e.preventDefault(); addHabit($("#newhabit").value); const n=$("#newhabit"); if(n) n.focus(); };
+  document.querySelectorAll("[data-habitidea]").forEach(b=>b.onclick=()=>addHabit(b.dataset.habitidea));
+  document.querySelectorAll("[data-renhabit]").forEach(inp=>inp.onchange=()=>{ const v=inp.value.trim().slice(0,40); if(!v){ render(); return; } const st=clone(Store.get("settings")||{}); const h=(st.habits||[]).find(x=>x.id===inp.dataset.renhabit); if(h){ h.name=v; Store.save("settings",st); toast("Renamed"); } });
+  document.querySelectorAll("[data-delhabit]").forEach(b=>b.onclick=()=>{ const st=clone(Store.get("settings")||{}); st.habits=(st.habits||[]).filter(h=>h.id!==b.dataset.delhabit); Store.save("settings",st); render(); toast("Habit removed. Past ticks are kept."); });
+  const eh=$("#edithabits"); if(eh) eh.onclick=()=>{ editHabits=!editHabits; render(); };
   const atk=$("#addtask"); if(atk) atk.onsubmit=e=>{ e.preventDefault(); const v=$("#newtask").value.trim(); if(!v) return;
     setDay(sel,d=>{ d.tasks=d.tasks||[]; d.tasks.push({id:uid(),text:v,done:false}); }); render(); const n=$("#newtask"); if(n) n.focus(); };
   document.querySelectorAll("[data-tick]").forEach(b=>b.onclick=()=>{ setDay(sel,d=>{ const t=(d.tasks||[]).find(x=>x.id===b.dataset.tick); if(t){ t.done=!t.done; if(t.done) t.doneAt=new Date().toISOString(); else delete t.doneAt; } }); render(); });
   document.querySelectorAll("[data-deltask]").forEach(b=>b.onclick=()=>{ setDay(sel,d=>{ d.tasks=(d.tasks||[]).filter(x=>x.id!==b.dataset.deltask); }); render(); });
   const cy=$("#carry"); if(cy) cy.onclick=()=>{ const cur=getDay(sel).tasks||[]; const prev=(getDay(addDays(sel,-1)).tasks||[]).filter(x=>!x.done && !cur.some(y=>y.text===x.text));
     setDay(sel,d=>{ d.tasks=(d.tasks||[]).concat(prev.map(x=>({id:uid(),text:x.text,done:false}))); }); render(); toast("Moved "+prev.length+" task"+(prev.length>1?"s":"")); };
+  const ds=$("#dsubj"); if(ds) ds.onchange=()=>{ lastDetailSubj=ds.value; const nm=(subjects().find(x=>x.id===ds.value)||{}).name; const dl=$("#topiclist"); if(dl) dl.innerHTML=topicsFor(nm).map(t=>`<option value="${esc(t)}"></option>`).join(""); };
+  const adf=$("#adddetail"); if(adf) adf.onsubmit=e=>{ e.preventDefault(); const sid=$("#dsubj").value; if(!sid) return;
+    const n=Math.max(1,Math.min(99,parseInt($("#dcount").value,10)||1)); lastDetailSubj=sid;
+    setDay(sel,d=>{ d.pdetail=d.pdetail||[]; d.pdetail.push({id:uid(),sid,topic:$("#dtopic").value.trim(),level:$("#dlevel").value,n}); d.practice=d.practice||{}; d.practice[sid]=(+d.practice[sid]||0)+n; });
+    render(); toast("Logged "+n+" question"+(n>1?"s":"")); };
+  document.querySelectorAll("[data-deldetail]").forEach(b=>b.onclick=()=>{ setDay(sel,d=>{ const e=(d.pdetail||[]).find(x=>x.id===b.dataset.deldetail); if(!e) return;
+    d.pdetail=d.pdetail.filter(x=>x!==e); d.practice=d.practice||{}; const v=Math.max(0,(+d.practice[e.sid]||0)-e.n); if(v) d.practice[e.sid]=v; else delete d.practice[e.sid]; }); render(); });
   const setQ=(id,v)=>{ setDay(sel,d=>{ d.practice=d.practice||{}; v=Math.max(0,Math.min(999,v|0)); if(v) d.practice[id]=v; else delete d.practice[id]; }); };
   const keepOpen=()=>{ const det=$("#subjdetails"); if(det) det.open=true; };
   document.querySelectorAll("[data-pplus]").forEach(b=>b.onclick=()=>{ const id=b.dataset.pplus; setQ(id,(+((getDay(sel).practice||{})[id])||0)+1); render(); });
@@ -788,7 +1190,7 @@ function bind(){
 let toastT;
 function toast(m){ let el=$(".toast"); if(!el){ el=document.createElement("div"); el.className="toast"; el.setAttribute("role","status"); document.body.appendChild(el); } el.textContent=m; el.hidden=false; clearTimeout(toastT); toastT=setTimeout(()=>el.hidden=true,2800); }
 
-const TABS=["today","time","jobs","insights","account"];
+const TABS=["today","questions","community","time","jobs","insights","account","admin"];
 function fromHash(){ const h=location.hash.slice(1); tab=TABS.includes(h)?h:"today"; }
 window.addEventListener("hashchange",()=>{ fromHash(); render(); window.scrollTo(0,0); });
 $("#prev").onclick=()=>{ sel=addDays(sel,-1); render(); };
@@ -803,13 +1205,15 @@ function showAuth(msg){
 }
 $("#amode").onclick=()=>{ signup=!signup; $("#asubmit").textContent=signup?"Create account":"Sign in";
   $("#amode").textContent=signup?"Already have an account? Sign in":"New here? Create an account";
-  $("#apass").autocomplete=signup?"new-password":"current-password"; $("#aerr").textContent=""; };
+  $("#apass").autocomplete=signup?"new-password":"current-password"; $("#aerr").textContent="";
+  $("#anamewrap").hidden=!signup; $("#anotice").hidden=!signup; $("#aname").required=signup; };
 $("#authform").onsubmit=async e=>{
   e.preventDefault(); const email=$("#aemail").value.trim(), password=$("#apass").value;
   $("#aerr").textContent=""; $("#asubmit").disabled=true;
   try{
     if(signup){
-      const {data,error}=await sb.auth.signUp({email,password,options:{emailRedirectTo:location.origin+location.pathname}});
+      const name=$("#aname").value.trim();
+      const {data,error}=await sb.auth.signUp({email,password,options:{emailRedirectTo:location.origin+location.pathname,data:{display_name:name}}});
       if(error) throw error;
       if(!data.session){ $("#aerr").textContent="Account created. Check your email, tap the confirmation link, then sign in here."; signup=true; $("#amode").click(); }
     }else{
@@ -827,6 +1231,7 @@ async function enter(user){
   if(!Store.get("settings")) Store.save("settings",{habits:clone(DEFAULT_HABITS),created:todayKey()});
   if(!Store.get("jobs")) Store.save("jobs",{items:[]});
   render();
+  await netInit(user);
 }
 
 if(!sb){
@@ -836,7 +1241,7 @@ if(!sb){
   sb.auth.onAuthStateChange((ev,session)=>{
     const u=session&&session.user;
     if(u && (!current || current.id!==u.id)){ current=u; enter(u); }
-    else if(!u){ current=null; Store.user=null; showAuth(); }
+    else if(!u){ current=null; Store.user=null; netReset(); showAuth(); }
   });
 }
 
