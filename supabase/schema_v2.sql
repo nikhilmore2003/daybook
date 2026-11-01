@@ -123,6 +123,10 @@ grant select on public.daily_sets, public.questions, public.solutions to authent
 grant select, insert, update, delete on public.submissions to authenticated;
 grant usage, select on all sequences in schema public to authenticated;
 revoke all on public.daily_sets, public.questions, public.solutions, public.submissions from anon;
+-- The daily-questions Edge Function writes with the service role. Needed when
+-- "Automatically expose new tables" is off.
+grant select, insert, update, delete on public.daily_sets, public.questions, public.solutions, public.submissions, public.members, public.admins to service_role;
+grant usage, select on all sequences in schema public to service_role;
 
 -- Who solved what on a day: names only, never answers. Everyone signed in can see it.
 create or replace function public.daily_solvers(p_day date)
