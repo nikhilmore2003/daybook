@@ -211,3 +211,29 @@ Signed-in members can see each other's name, practice streak, stats, solved dail
    delete from daily_sets where day = (now() at time zone 'Asia/Kolkata')::date;
    ```
    Then Edge Functions → Test → Send Request, wait a minute.
+
+---
+
+# Version 4: Feedback and footer
+
+1. Supabase → SQL Editor → run `supabase/schema_v4.sql`.
+2. In `index.html`, set your LinkedIn link in the `OWNER` line near the top of the script.
+3. Upload `index.html` and `sw.js` to GitHub.
+
+Feedback appears in the **Admin** tab, newest first, with the sender's name and email so you can reply.
+
+---
+
+# Version 5: Feedback replies, real practice stats, safer sign-up
+
+1. Supabase → SQL Editor → run `supabase/schema_v5.sql`.
+2. Upload `index.html` and `sw.js` to GitHub.
+
+---
+
+# Version 6: New theme, light/dark button, email confirmation with a code
+
+1. Set up an email sender (Brevo, free): see the steps in the chat / below, then in Supabase → Authentication → Emails → SMTP Settings, turn on custom SMTP.
+2. Supabase → Authentication → Emails → Templates → "Confirm sign up": paste `supabase/email/confirm-signup.html`.
+3. Supabase → Authentication → Sign In / Providers → Email → turn **Confirm email** ON.
+4. Upload `index.html`, `sw.js`, `manifest.webmanifest` and the `icons` folder to GitHub.
