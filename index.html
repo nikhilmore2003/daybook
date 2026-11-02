@@ -1131,8 +1131,13 @@ async function setFeedbackStatus(id,status){
 async function loadFeedbackNotices(){
   const {data,error}=await sb.from("feedback").select("id,kind,message,reply,replied_at").eq("user_id",Net.uid).eq("status","done").not("replied_at","is",null).is("seen_at",null).order("replied_at",{ascending:false}).limit(5);
   if(error||!data||!data.length) return;
-  Net.fbNotices=data; render();
-  data.forEach(x=>sb.rpc("mark_feedback_seen",{fid:x.id}));   // shown once: marked seen right away
+  let seenHere=[]; try{ seenHere=JSON.parse(localStorage.getItem("daybook-fbseen:"+Net.uid))||[]; }catch(e){}
+  const fresh=data.filter(x=>!seenHere.includes(x.id)); if(!fresh.length) return;
+  Net.fbNotices=fresh; render();
+  // shown once: remember on this device and mark as seen in the database (the request must be awaited to be sent)
+  try{ localStorage.setItem("daybook-fbseen:"+Net.uid, JSON.stringify(seenHere.concat(fresh.map(x=>x.id)).slice(-200))); }catch(e){}
+  const res=await Promise.all(fresh.map(x=>sb.rpc("mark_feedback_seen",{fid:x.id})));
+  const failed=res.find(r=>r&&r.error); if(failed) console.warn("Couldn't mark feedback as seen:", failed.error.message);
 }
 function viewNotices(){
   const L=Net.fbNotices||[]; if(!L.length) return "";
