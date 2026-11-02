@@ -261,6 +261,26 @@ textarea.code{font-family:var(--f-mono);font-size:13px;line-height:1.5;tab-size:
 .tag.ok{background:color-mix(in srgb,var(--good) 18%,transparent);color:var(--good)}
 .tag.bad{background:color-mix(in srgb,var(--bad) 15%,transparent);color:var(--bad)}
 pre.code-out{white-space:pre-wrap;overflow-wrap:anywhere;font-family:var(--f-mono);font-size:13px;margin:0}
+.foot{margin-top:28px;padding-top:16px;border-top:1px solid var(--line);display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center;justify-content:space-between;font-size:13px;color:var(--muted)}
+.foot b{color:var(--ink);font-weight:600}
+.foot a{color:var(--accent);text-decoration:none;font-weight:600}
+.foot a:hover{text-decoration:underline}
+.foot .links{display:flex;gap:14px;flex-wrap:wrap}
+.fb h2{font-size:17px}
+.fb .kinds{display:flex;flex-wrap:wrap;gap:6px}
+.fb .stars{display:flex;gap:2px}
+.fb .stars button{border:0;background:transparent;font-size:22px;line-height:1;padding:2px;color:var(--line)}
+.fb .stars button.on{color:var(--mark)}
+.fb textarea{min-height:90px}
+.fb .sent{background:color-mix(in srgb,var(--good) 13%,transparent);color:var(--good);border-radius:8px;padding:10px 12px;font-weight:600;font-size:14px}
+@media (min-width:1420px){
+  .fb.side{position:fixed;top:calc(env(safe-area-inset-top,0px) + 150px);left:max(16px, calc((100vw - 860px)/2 - 300px));width:272px;max-height:calc(100vh - 180px);overflow:auto;z-index:4}
+}
+.fbitem{border-top:1px solid var(--line);padding:12px 0;display:grid;gap:6px}
+.fbitem:first-of-type{border-top:0}
+.fbitem .meta{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;font-size:12px;color:var(--muted)}
+.fbitem p{margin:0;white-space:pre-wrap;overflow-wrap:anywhere}
+.fbitem.done{opacity:.55}
 .tasks{list-style:none;margin:0;padding:0;display:grid}
 .task{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;padding:8px 0;border-top:1px solid var(--line)}
 .task:first-child{border-top:0}
@@ -350,6 +370,7 @@ pre.code-out{white-space:pre-wrap;overflow-wrap:anywhere;font-family:var(--f-mon
     <main id="view"></main>
   </div>
   <div class="loading" id="boot">Opening your daybook…</div>
+  <footer class="foot" id="foot"></footer>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.4/dist/umd/supabase.js"></script>
@@ -581,7 +602,8 @@ function viewToday(){
       <div class="hint" id="notestate" style="margin-top:6px">Saves as you type.</div>
     </section>
   </div>
-  ${viewPractice(d)}`;
+  ${viewPractice(d)}
+  ${viewFeedback()}`;
 }
 
 function viewTime(){
@@ -869,11 +891,13 @@ function importCSV(text){
 }
 
 /* ---------- community, daily questions, admin ---------- */
+// About the maker, shown in the footer. Put your LinkedIn profile link here.
+const OWNER = { name:"Nikhil More", role:"Data Analyst · Pune", linkedin:"https://www.linkedin.com/in/nikhil-more-a43a2b259", github:"https://github.com/nikhilmore2003/daybook" };
 const QFN = (window.DAYBOOK_CONFIG||{}).QUESTIONS_FUNCTION || "rapid-api";  // name of the Supabase Edge Function
 const Net = { uid:null, me:null, meLoaded:false, isAdmin:false,
   members:[], membersAt:0, membersLoading:false,
   q:{ key:null, loading:false, status:null, error:null, day:null, list:[], mine:{}, solvers:[], polls:0 },
-  open:{}, detail:{}, drafts:{}, editing:{}, run:{}, expected:{}, pbiVal:{}, filter:"All",
+  open:{}, detail:{}, drafts:{}, editing:{}, run:{}, expected:{}, pbiVal:{}, fb:{kind:"idea",rating:0,text:"",sending:false,sent:false}, fbList:null, fbAt:0, filter:"All",
   admin:{ rows:null, loading:false, at:0, err:null }, lbSort:"streak", feedQ:"", feedPlat:"", feedN:40, syncT:null };
 function netReset(){ Object.assign(Net,{ uid:null, me:null, meLoaded:false, isAdmin:false, members:[], membersAt:0, open:{}, detail:{}, drafts:{}, editing:{}, run:{}, expected:{}, pbiVal:{} });
   Net.q={ key:null, loading:false, status:null, error:null, day:null, list:[], mine:{}, solvers:[], polls:0 }; Net.admin={ rows:null, loading:false, at:0, err:null }; }
@@ -939,6 +963,7 @@ function ensureData(){
   if(tab==="community"){ if(!Net.membersLoading && Date.now()-Net.membersAt>60000) loadMembers();
     const t=todayKey(); if(Net.q.key!==t && !Net.q.loading) loadQuestions(t,true); }
   if(tab==="admin" && Net.isAdmin && !Net.admin.loading && Date.now()-Net.admin.at>60000) loadAdmin();
+  if(tab==="admin" && Net.isAdmin && Date.now()-Net.fbAt>60000) loadFeedback();
 }
 async function loadMembers(){
   Net.membersLoading=true;
@@ -1008,6 +1033,60 @@ async function submitAnswer(id){
     toast(correct===true?"Submitted ✓ Correct. Answers unlocked.":"Submitted. Answers unlocked.");
   } else toast("Answer updated");
   loadDetail(id); scheduleMemberSync(800);
+}
+/* ---------- footer + feedback ---------- */
+function renderFooter(){
+  const el=$("#foot"); if(!el) return;
+  const li=OWNER.linkedin && !/YOUR-PROFILE/.test(OWNER.linkedin);
+  el.innerHTML=`<span>Built by <b>${esc(OWNER.name)}</b> · ${esc(OWNER.role)}</span>
+    <span class="links">${li?`<a href="${esc(OWNER.linkedin)}" target="_blank" rel="noopener noreferrer">LinkedIn ↗</a>`:""}<a href="${esc(OWNER.github)}" target="_blank" rel="noopener noreferrer">GitHub ↗</a>${Store.user?`<a href="#today" id="footfb">Send feedback</a>`:""}</span>`;
+  const ff=$("#footfb"); if(ff) ff.onclick=e=>{ e.preventDefault(); if(tab!=="today"){ location.hash="#today"; } setTimeout(()=>{ const t=$("#fbtext"); if(t){ t.scrollIntoView({behavior:"smooth",block:"center"}); t.focus(); } },120); };
+}
+const FB_KINDS=[["idea","💡 Idea"],["bug","🐞 Bug"],["like","❤️ Something I like"],["other","Other"]];
+function viewFeedback(){
+  const F=Net.fb, li=OWNER.linkedin && !/YOUR-PROFILE/.test(OWNER.linkedin);
+  if(F.sent) return `<aside class="panel fb side"><h2>Thank you!</h2><div class="sent">Your feedback reached ${esc(OWNER.name.split(" ")[0])}. He reads every message.</div>
+    <button class="linkbtn" id="fbagain" style="margin-top:10px">Send more feedback</button>${li?`<p class="hint" style="margin:10px 0 0">Want to talk? <a href="${esc(OWNER.linkedin)}" target="_blank" rel="noopener noreferrer">Message me on LinkedIn ↗</a></p>`:""}</aside>`;
+  return `<aside class="panel fb side" aria-labelledby="fbh"><h2 id="fbh">Help improve Daybook</h2>
+    <p class="sub">Found a bug or have an idea? Tell me directly. I'm ${esc(OWNER.name)}, and I read every message.</p>
+    <div class="kinds" style="margin-bottom:10px">${FB_KINDS.map(([k,l])=>`<button class="chip ${F.kind===k?"on":""}" data-fbkind="${k}">${l}</button>`).join("")}</div>
+    <div class="label" style="margin-bottom:4px">How useful is Daybook for you? <span class="hint">(optional)</span></div>
+    <div class="stars" style="margin-bottom:10px">${[1,2,3,4,5].map(n=>`<button data-fbstar="${n}" class="${F.rating>=n?"on":""}" aria-label="${n} star${n>1?"s":""}">★</button>`).join("")}</div>
+    <div class="field"><label class="label" for="fbtext">Your message</label><textarea id="fbtext" maxlength="2000" placeholder="${F.kind==="bug"?"What happened, and on which page?":"What would make Daybook better for you?"}">${esc(F.text)}</textarea></div>
+    <div class="row" style="margin-top:10px;align-items:center"><button class="btn" id="fbsend" ${F.sending?"disabled":""}>${F.sending?"Sending…":"Send feedback"}</button></div>
+    ${li?`<p class="hint" style="margin:10px 0 0">Or <a href="${esc(OWNER.linkedin)}" target="_blank" rel="noopener noreferrer">message me on LinkedIn ↗</a></p>`:""}
+  </aside>`;
+}
+async function sendFeedback(){
+  const F=Net.fb; const t=$("#fbtext"); F.text=t?t.value:F.text; const msg=F.text.trim();
+  if(!msg){ toast("Write a short message first."); if(t) t.focus(); return; }
+  F.sending=true; render();
+  const {error}=await sb.from("feedback").insert({user_id:Net.uid, name:(Net.me&&Net.me.display_name)||null, email:(Store.user&&Store.user.email)||null, kind:F.kind, rating:F.rating||null, message:msg.slice(0,2000), page:tab});
+  F.sending=false;
+  if(error){ toast(/feedback/.test(error.message)&&/schema cache|does not exist/.test(error.message)? "Feedback isn't switched on yet. Try again later." : "Couldn't send: "+error.message); render(); return; }
+  Object.assign(F,{text:"",rating:0,kind:"idea",sent:true}); Net.fbAt=0; render();
+}
+async function loadFeedback(){
+  Net.fbAt=Date.now();
+  const {data,error}=await sb.from("feedback").select("*").order("created_at",{ascending:false}).limit(300);
+  Net.fbList=error? {error:error.message} : (data||[]);
+  if(tab==="admin") render();
+}
+async function setFeedbackStatus(id,status){
+  const {error}=await sb.from("feedback").update({status}).eq("id",id);
+  if(error){ toast("Couldn't update: "+error.message); return; }
+  const it=(Array.isArray(Net.fbList)?Net.fbList:[]).find(x=>x.id===id); if(it) it.status=status; render();
+}
+function viewFeedbackAdmin(){
+  const L=Net.fbList;
+  if(L==null) return `<section class="panel"><h2>Feedback</h2><div class="empty"><span class="spin"></span>Loading…</div></section>`;
+  if(L.error) return `<section class="panel"><h2>Feedback</h2><p class="notice">${esc(L.error)}</p><p class="hint">Run supabase/schema_v4.sql to switch feedback on.</p></section>`;
+  const fresh=L.filter(x=>x.status==="new").length, rated=L.filter(x=>x.rating), avgR=rated.length? (rated.reduce((s,x)=>s+x.rating,0)/rated.length).toFixed(1) : "–";
+  const label=Object.fromEntries(FB_KINDS);
+  return `<section class="panel"><h2>Feedback</h2><p class="sub"><span class="num">${fresh}</span> new · <span class="num">${L.length}</span> total · average rating <span class="num">${avgR}</span>/5</p>
+    ${L.length? L.map(x=>`<div class="fbitem ${x.status==="done"?"done":""}"><div class="meta"><span class="chip" style="padding:2px 8px;cursor:default">${label[x.kind]||esc(x.kind)}</span>${x.rating?`<span>${"★".repeat(x.rating)}</span>`:""}<b style="color:var(--ink)">${esc(x.name||"Member")}</b><span>${esc(x.email||"")}</span>${x.created_at?`<span>${ago(x.created_at)}</span>`:""}${x.page?`<span>from ${esc(x.page)}</span>`:""}</div>
+      <p>${esc(x.message)}</p><div><button class="linkbtn" data-fbstatus="${x.id}" data-to="${x.status==="done"?"new":"done"}">${x.status==="done"?"Mark as new":"Mark as done"}</button></div></div>`).join("") : `<div class="empty">No feedback yet.</div>`}
+  </section>`;
 }
 async function loadAdmin(){
   const A=Net.admin; A.loading=true;
@@ -1357,6 +1436,7 @@ function viewAdmin(){
     ${Q.key===t && Q.error?`<p class="notice">${esc(Q.error)}</p>`:""}
     <div class="row"><button class="btn ghost small" id="retrygen">Generate missing questions</button><a class="btn ghost small" href="#questions" style="text-decoration:none">Open Daily Practice</a></div>
   </section>
+  ${viewFeedbackAdmin()}
   <section class="panel"><h2>Members</h2>
     <p class="sub"><span class="num">${rows.length}</span> accounts. Passwords are never visible to anyone; Supabase stores them scrambled.</p>
     ${A.err?`<p class="notice">${esc(A.err)}</p>`:""}
@@ -1387,7 +1467,13 @@ function bindNet(){
   const fq=$("#feedq"); if(fq) fq.oninput=()=>{ Net.feedQ=fq.value; clearTimeout(Net.fqT); Net.fqT=setTimeout(()=>{ render(); const f=$("#feedq"); if(f){ f.focus(); f.setSelectionRange(f.value.length,f.value.length); } },250); };
   const fp=$("#feedplat"); if(fp) fp.onchange=()=>{ Net.feedPlat=fp.value; render(); };
   const fm=$("#feedmore"); if(fm) fm.onclick=()=>{ Net.feedN+=40; render(); };
-  const ar=$("#adminrefresh"); if(ar) ar.onclick=()=>{ Net.admin.at=0; loadAdmin(); };
+  const ar=$("#adminrefresh"); if(ar) ar.onclick=()=>{ Net.admin.at=0; Net.fbAt=0; loadAdmin(); loadFeedback(); };
+  document.querySelectorAll("[data-fbkind]").forEach(b=>b.onclick=()=>{ const t=$("#fbtext"); if(t) Net.fb.text=t.value; Net.fb.kind=b.dataset.fbkind; render(); });
+  document.querySelectorAll("[data-fbstar]").forEach(b=>b.onclick=()=>{ const t=$("#fbtext"); if(t) Net.fb.text=t.value; const n=+b.dataset.fbstar; Net.fb.rating=Net.fb.rating===n?0:n; render(); });
+  const ft=$("#fbtext"); if(ft) ft.oninput=()=>{ Net.fb.text=ft.value; };
+  const fs=$("#fbsend"); if(fs) fs.onclick=sendFeedback;
+  const fa=$("#fbagain"); if(fa) fa.onclick=()=>{ Net.fb.sent=false; render(); };
+  document.querySelectorAll("[data-fbstatus]").forEach(b=>b.onclick=()=>setFeedbackStatus(+b.dataset.fbstatus,b.dataset.to));
   const ae=$("#adminexport"); if(ae) ae.onclick=()=>exportFile("daybook-members.csv",[["name","email","joined","last_sign_in","streak","daily_qs_solved","practice_7d","applications"],
     ...(Net.admin.rows||[]).map(r=>[r.display_name||"",r.email,r.joined,r.last_sign_in||"",r.streak,r.solved_total,r.practice_7d,r.applications])].map(r=>r.map(csvCell).join(",")).join("\n"));
 }
@@ -1401,7 +1487,7 @@ function render(){
   document.body.classList.toggle("wide", tab==="questions");
   v.innerHTML = viewNamePanel() + (tab==="time"? viewTime() : tab==="jobs"? viewJobs() : tab==="insights"? viewInsights() : tab==="account"? viewAccount()
     : tab==="questions"? viewQuestions() : tab==="community"? viewCommunity() : tab==="admin"? viewAdmin() : viewToday());
-  bind(); bindNet(); ensureData();
+  bind(); bindNet(); ensureData(); renderFooter();
 }
 function bind(){
   document.querySelectorAll("[data-habit]").forEach(b=>b.onclick=()=>{ const h=b.dataset.habit; setDay(sel,d=>{ if(d.habits[h]) delete d.habits[h]; else d.habits[h]=true; }); render(); });
@@ -1465,6 +1551,7 @@ $("#gotoday").onclick=()=>{ sel=todayKey(); render(); };
 /* ---------- auth ---------- */
 let signup=false;
 function showAuth(msg){
+  setTimeout(renderFooter,0);
   $("#boot").hidden=true; $("#appview").hidden=true; $("#authview").hidden=false;
   if(msg) $("#aerr").textContent=msg;
 }
