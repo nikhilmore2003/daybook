@@ -804,6 +804,14 @@ function viewAccount(){
     <p class="sub">Shown next to your streak, answers and applications in Community.</p>
     <form class="row" id="rename"><div class="field grow"><input type="text" id="renameinput" maxlength="40" value="${esc((Net.me&&Net.me.display_name)||"")}" aria-label="Community name" required></div><button class="btn ghost">Save name</button></form>
   </section>
+  <section class="panel acct"><h2>Change password</h2>
+    <p class="sub">At least 6 characters. You stay signed in on this device.</p>
+    <form id="pwform" style="display:grid;gap:10px;max-width:420px">
+      <div class="field"><label class="label" for="pwnew">New password</label><input type="password" id="pwnew" minlength="6" autocomplete="new-password" required></div>
+      <div class="field"><label class="label" for="pwnew2">Type it again</label><input type="password" id="pwnew2" minlength="6" autocomplete="new-password" required></div>
+      <div class="row" style="align-items:center"><button class="btn ghost" id="pwbtn">Change password</button><span class="hint" id="pwmsg" role="status"></span></div>
+    </form>
+  </section>
   <section class="panel acct"><h2>Account</h2>
     <p class="sub">Signed in as <b>${esc(Store.user.email||"")}</b>. <span class="num">${nd}</span> days logged, <span class="num">${jobs().length}</span> applications.</p>
     <div class="row"><button class="btn ghost" id="syncnow">Sync now</button><button class="btn ghost" id="signout">Sign out</button></div>
@@ -1534,6 +1542,14 @@ function bind(){
   document.querySelectorAll("[data-deljob]").forEach(b=>b.onclick=()=>{ const j=clone(Store.get("jobs")); j.items=j.items.filter(x=>x.id!==b.dataset.deljob); Store.save("jobs",j); render(); });
   const ed=$("#exdays"); if(ed) ed.onclick=()=>exportFile("daybook-daily-log.csv",daysCSV());
   const ej=$("#exjobs"); if(ej) ej.onclick=()=>exportFile("daybook-applications.csv",jobsCSV());
+  const pw=$("#pwform"); if(pw) pw.onsubmit=async e=>{ e.preventDefault(); const a=$("#pwnew").value, b=$("#pwnew2").value, m=$("#pwmsg");
+    if(a.length<6){ m.textContent="Use at least 6 characters."; return; }
+    if(a!==b){ m.textContent="The two passwords don't match."; return; }
+    $("#pwbtn").disabled=true; m.textContent="Saving…";
+    const {error}=await sb.auth.updateUser({password:a});
+    $("#pwbtn").disabled=false;
+    if(error){ m.textContent=/different from the old/i.test(error.message)? "That's your current password. Choose a new one." : /reauth|recent/i.test(error.message)? "For safety, sign out, sign in again, then change it." : "Couldn't change it: "+error.message; return; }
+    $("#pwnew").value=""; $("#pwnew2").value=""; m.textContent="Password changed. Use it next time you sign in."; toast("Password changed"); };
   const so=$("#signout"); if(so) so.onclick=async()=>{ await Store.push(); await sb.auth.signOut(); };
   const sn=$("#syncnow"); if(sn) sn.onclick=()=>Store.pull().then(()=>{ render(); toast("Synced"); }).catch(()=>toast("Couldn't reach the server. Check your internet."));
   const fi=$("#importfile"); if(fi) fi.onchange=()=>{ const f=fi.files[0]; if(!f) return; const rd=new FileReader(); rd.onload=()=>{ const msg=importCSV(String(rd.result)); render(); const m=$("#importmsg"); if(m) m.textContent=msg; toast(msg); }; rd.readAsText(f); };
