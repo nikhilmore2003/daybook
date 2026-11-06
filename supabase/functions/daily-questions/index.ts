@@ -201,7 +201,7 @@ async function askGemini(prompt: string, deadline: number) {
         headers: { "Content-Type": "application/json", "x-goog-api-key": key },
         body: JSON.stringify({
           contents: [{ role: "user", parts: [{ text: prompt }] }],
-          generationConfig: { responseMimeType: "application/json", responseSchema: SCHEMA, temperature: 0.8 },
+          generationConfig: { responseMimeType: "application/json", responseSchema: SCHEMA, temperature: 1.0 },
         }),
       });
       const data = await res.json().catch(() => ({}));
@@ -315,13 +315,13 @@ Deno.serve(async (req) => {
     const done = new Set((have || []).map((q) => q.subject));
     const todo = SUBJECTS.filter((s) => !done.has(s.name));
 
-    const { data: recentRows } = await db.from("questions").select("subject,title")
+    const { data: recentRows } = await db.from("questions").select("subject,title,topic")
       .gte("day", istDay(-21)).lt("day", day);
 
     const results = await Promise.allSettled(todo.map(async (s) => {
       const base = SUBJECTS.indexOf(s) * 100;
-      const recent = (recentRows || []).filter((r) => r.subject === s.name).map((r) => r.title).slice(-60);
-      const out = await askGemini(buildPrompt(s, recent), deadline);
+      const recent = (recentRows || []).filter((r) => r.subject === s.name).map((r) => `${r.title} [${r.topic ?? ""}]`).slice(-60);
+      const out = await askGemini(buildPrompt(s, recent, day), deadline);
       const tables = s.data ? cleanTables(out) : [];
       if (s.data && !tables.length) throw new Error("The AI reply had no dataset.");
       const qs = cleanQuestions(out);
