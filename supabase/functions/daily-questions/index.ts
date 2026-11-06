@@ -51,6 +51,70 @@ EVERY QUESTION: ask the learner to write a DAX measure and then report ONE numbe
     rules: `No dataset: return "datasets": []. Give a concrete scenario with numbers where useful. Answers are structured approaches. Set "checker" and "answer_cell" to "".`,
   },
 ];
+// ---- Daily rotation: a different topic set and dataset theme every day ----
+const TOPIC_POOL: Record<string, string[]> = {
+  "Excel": [
+    "SUMPRODUCT with conditions", "INDEX-MATCH on two criteria", "nested IF with AND/OR",
+    "COUNTIFS with wildcards (*, ?)", "date functions (EOMONTH, DATEDIF, WEEKDAY, YEAR/MONTH)",
+    "text cleaning (TRIM, SUBSTITUTE, LEFT/MID/RIGHT, FIND/SEARCH)", "LARGE / SMALL (nth highest or lowest)",
+    "percentage change and growth rate", "IFERROR with lookups", "approximate-match lookup for slabs/grades/tax bands",
+    "weighted average", "MOD / ROUND / CEILING for billing or packing", "ISNUMBER + SEARCH for keyword flags",
+    "CHOOSE / SWITCH for category mapping", "running total with absolute references", "AVERAGEIFS with date ranges",
+    "extracting the domain or code from an email or ID", "age or tenure calculation from dates"
+  ],
+  "SQL": [
+    "LEFT JOIN with NULL check (unmatched rows)", "GROUP BY with HAVING", "ROW_NUMBER per group (top N per group)",
+    "RANK vs DENSE_RANK", "LAG/LEAD for month-over-month change", "running total with window SUM",
+    "CTE with two steps", "correlated subquery", "CASE WHEN bucketing", "date functions with strftime",
+    "finding duplicates", "self join (employee-manager or pairs)", "percent of total with window function",
+    "customers who did X but not Y", "second highest value", "COUNT DISTINCT with conditions",
+    "first and last event per user", "cohort-style retention"
+  ],
+  "Python": [
+    "groupby with multiple aggregations", "merge/join with different join types", "pivot_table",
+    "handling missing values (fillna/dropna)", "drop_duplicates", "apply with lambda", "string methods with .str",
+    "pd.to_datetime and date parts", "nlargest / sort_values", "value_counts and percentages",
+    "cumsum and rolling mean", "boolean filtering with multiple conditions", "creating bins with pd.cut",
+    "transform for group-wise percentages", "rank within groups", "outlier detection with IQR",
+    "crosstab", "reshaping with melt"
+  ],
+  "Power BI": [
+    "CALCULATE with a filter", "ALL / ALLEXCEPT for percent of total", "DIVIDE for safe ratios",
+    "DISTINCTCOUNT", "RELATED across tables", "measure vs calculated column", "YTD total",
+    "month-over-month change", "same period last year", "RANKX", "COUNTROWS with FILTER",
+    "AVERAGEX / SUMX iterators", "running total measure", "TOPN", "SELECTEDVALUE and conditional logic"
+  ],
+  "Business case": [
+    "sales dropped 15% in a week: find the root cause", "which KPI should a food-delivery app track",
+    "A/B test: is the result significant", "funnel drop-off between app install and first order",
+    "customer churn analysis", "pricing change impact", "marketing campaign ROI", "inventory stock-outs",
+    "delivery time increased", "cohort retention comparison", "guesstimate: daily orders in a city",
+    "choosing between two metrics", "fraud spike in a payments app", "defining an active user"
+  ],
+};
+
+const THEMES = [
+  "a quick-commerce delivery app", "a hospital appointment system", "an online course platform",
+  "a bank's loan applications", "a retail clothing chain", "a cricket league", "an airline's bookings",
+  "a restaurant chain", "a telecom company's customers", "an HR / employee database", "a real-estate portal",
+  "a streaming platform", "a logistics and courier company", "an electronics e-commerce store",
+  "a school's exam results", "a gym membership business", "a ride-hailing app", "a grocery supply chain"
+];
+
+function seededRng(seed: number) {
+  let s = seed >>> 0;
+  return () => { s = (s * 1664525 + 1013904223) >>> 0; return s / 4294967296; };
+}
+
+function dailyFocus(subject: string, day: string) {
+  const seed = [...(day + subject)].reduce((h, c) => (h * 31 + c.charCodeAt(0)) >>> 0, 7);
+  const rnd = seededRng(seed);
+  const pool = [...(TOPIC_POOL[subject] || [])];
+  for (let i = pool.length - 1; i > 0; i--) { const j = Math.floor(rnd() * (i + 1)); [pool[i], pool[j]] = [pool[j], pool[i]]; }
+  const topics = pool.slice(0, 7).map((t, i) => `Q${i + 1}: ${t}`).join("; ");
+  const theme = THEMES[Math.floor(rnd() * THEMES.length)];
+  return { topics, theme };
+}
 
 const CORS = {
   "Access-Control-Allow-Origin": "*",
@@ -63,12 +127,14 @@ const json = (body: unknown, status = 200) =>
 // Calendar day in India (UTC+5:30), shifted by n days.
 const istDay = (n = 0) => new Date(Date.now() + 5.5 * 3600e3 + n * 864e5).toISOString().slice(0, 10);
 
-function buildPrompt(s: Subject, recent: string[]) {
+function buildPrompt(s: Subject, recent: string[] , day: string) {
+  const f = dailyFocus(s.name, day)) {
   const total = LEVELS.easy + LEVELS.medium + LEVELS.hard;
   return `You write daily hands-on practice questions for aspiring data analysts in India.
 Subject: ${s.name}
 ${s.data ? "First create ONE realistic small business dataset (Indian context: cities, ₹ amounts, Indian names). Then write" : "Write"} exactly ${LEVELS.easy} easy, ${LEVELS.medium} medium and ${LEVELS.hard} hard questions (${total} total) in that order${s.data ? ", all answerable from that dataset" : ""}.
-Spread them across different topics from: ${s.topics}.
+${f.topics ? `MANDATORY topic for each question, in this order, one topic per question (match the difficulty level of each question): ${f.topics}.
+Avoid the usual basics (plain COUNTIF, SUMIF, AVERAGEIF, MAXIF, extracting a first name) unless they are listed above.${s.data ? `\nDataset theme for today: ${f.theme}.` : ""}` : `Spread them across different topics from: ${s.topics}.`}
 Easy = one concept. Medium = combines 2 or 3 concepts. Hard = multi-step, realistic interview level.
 ${s.rules}
 Every cell value in the dataset rows is a string (numbers as plain digits like "1250" or "12.5", no ₹ sign or commas inside numbers).
